@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MotionAlarm.Pages.HomePage"
+             Title="Охорона"
+             BackgroundColor="{AppThemeBinding Light=#F7F8FA, Dark=#111318}">
+    <Grid Padding="24" RowDefinitions="Auto,*" RowSpacing="24">
+        <!-- Статус -->
+        <VerticalStackLayout Grid.Row="0" Spacing="6" HorizontalOptions="Center">
+            <Label Text="{Binding StatusMessage}" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="{AppThemeBinding Light=#202124, Dark=#FFFFFF}" />
+        </VerticalStackLayout>
+        <!-- Основна кнопка УВІМКНУТИ / ВИМКНУТИ -->
+        <Grid Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Center">
+            <Border WidthRequest="250" HeightRequest="250" StrokeThickness="8" BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1B1E24}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="125" />
+                </Border.StrokeShape>
+                <Border.Triggers>
+                    <!-- Охорона увімкнена -->
+                    <DataTrigger TargetType="Border" Binding="{Binding IsArmed}" Value="True">
+                        <Setter Property="Stroke" Value="#22C55E" />
+                    </DataTrigger>
+                    <!-- Охорона вимкнена -->
+                    <DataTrigger TargetType="Border" Binding="{Binding IsArmed}" Value="False">
+                        <Setter Property="Stroke" Value="#9CA3AF" />
+                    </DataTrigger>
+                </Border.Triggers>
+                <Button Command="{Binding ToggleAlarmCommand}" BackgroundColor="Transparent" BorderWidth="0" CornerRadius="125" FontSize="28" FontAttributes="Bold" HorizontalOptions="Fill" VerticalOptions="Fill">
+                    <Button.Triggers>
+                        <!-- Увімкнена -->
+                        <DataTrigger TargetType="Button" Binding="{Binding IsArmed}" Value="True">
+                            <Setter Property="Text" Value="ВИМКНУТИ" />
+                            <Setter Property="TextColor" Value="#22C55E" />
+                        </DataTrigger>
+                        <!-- Вимкнена -->
+                        <DataTrigger TargetType="Button" Binding="{Binding IsArmed}" Value="False">
+                            <Setter Property="Text" Value="УВІМКНУТИ" />
+                            <Setter Property="TextColor" Value="#6B7280" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MotionAlarm.Pages.SettingsPage"
+             Title="Налаштування"
+             BackgroundColor="{AppThemeBinding Light=#F7F8FA, Dark=#111318}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20"
+                             Spacing="18">
+
+            <!-- Заголовок -->
+            <VerticalStackLayout Spacing="4">
+
+                <Label Text="Налаштування"
+                       FontSize="28"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#202124, Dark=#FFFFFF}" />
+
+                <Label Text="Налаштуйте роботу сигналізації"
+                       FontSize="15"
+                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#A0A4AD}" />
+
+            </VerticalStackLayout>
+
+
+            <!-- Звукова сигналізація -->
+            <Border Padding="18"
+                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1B1E24}"
+                    Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#30343D}"
+                    StrokeThickness="1">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+
+                <Grid ColumnDefinitions="*,Auto"
+                      RowDefinitions="Auto,Auto"
+                      ColumnSpacing="16">
+
+                    <Label Text="Звукова сигналізація"
+                           FontSize="17"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#202124, Dark=#FFFFFF}" />
+
+                    <Switch Grid.Column="1"
+                            Grid.RowSpan="2"
+                            IsToggled="{Binding SirenEnabled}"
+                            VerticalOptions="Center" />
+
+                    <Label Grid.Row="1"
+                           Text="Відтворювати сирену після спрацювання"
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#A0A4AD}" />
+
+                </Grid>
+
+            </Border>
+
+            <!-- Чутливість -->
+            <Border Padding="18"
+        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1B1E24}"
+        Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#30343D}"
+        StrokeThickness="1">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="12">
+
+                    <Label Text="Чутливість руху"
+               FontSize="17"
+               FontAttributes="Bold"
+               TextColor="{AppThemeBinding Light=#202124, Dark=#FFFFFF}" />
+
+                    <Label Text="Вищий рівень означає більшу чутливість до руху."
+               FontSize="13"
+               TextColor="{AppThemeBinding Light=#6B7280, Dark=#A0A4AD}" />
+
+                    <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="12">
+
+                        <Slider Minimum="1"
+                    Maximum="5"
+                    Value="{Binding Sensitivity}"
+                    MinimumTrackColor="#22C55E"
+                    MaximumTrackColor="#D1D5DB"
+                    VerticalOptions="Center" />
+
+                        <Label Grid.Column="1"
+                   Text="{Binding Sensitivity, StringFormat='{0:0}'}"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   WidthRequest="35"
+                   HorizontalTextAlignment="Center"
+                   VerticalOptions="Center"
+                   TextColor="{AppThemeBinding Light=#202124, Dark=#FFFFFF}" />
+
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Зберегти -->
+            <Button Text="ЗБЕРЕГТИ"
+                    Command="{Binding SaveCommand}"
+                    HeightRequest="54"
+                    CornerRadius="14"
+                    BackgroundColor="#22C55E"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    Margin="0,4,0,10" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

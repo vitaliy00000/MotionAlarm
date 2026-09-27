@@ -1,10 +1,9 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
-using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace MotionAlarm
 {
-    public static class MauiProgram
+    public static partial class MauiProgram
     {
         public static MauiApp CreateMauiApp()
         {
@@ -12,24 +11,6 @@ namespace MotionAlarm
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
-                .ConfigureSyncfusionToolkit()
-                .ConfigureMauiHandlers(handlers =>
-                {
-#if WINDOWS
-    				Microsoft.Maui.Controls.Handlers.Items.CollectionViewHandler.Mapper.AppendToMapping("KeyboardAccessibleCollectionView", (handler, view) =>
-    				{
-    					handler.PlatformView.SingleSelectionFollowsFocus = false;
-    				});
-
-    				Microsoft.Maui.Handlers.ContentViewHandler.Mapper.AppendToMapping(nameof(Pages.Controls.CategoryChart), (handler, view) =>
-    				{
-    					if (view is Pages.Controls.CategoryChart && handler.PlatformView is Microsoft.Maui.Platform.ContentPanel contentPanel)
-    					{
-    						contentPanel.IsTabStop = true;
-    					}
-    				});
-#endif
-                })
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -43,20 +24,35 @@ namespace MotionAlarm
     		builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
-            builder.Services.AddSingleton<ProjectRepository>();
-            builder.Services.AddSingleton<TaskRepository>();
-            builder.Services.AddSingleton<CategoryRepository>();
-            builder.Services.AddSingleton<TagRepository>();
-            builder.Services.AddSingleton<SeedDataService>();
+            builder.Services.ConfigureDatabase();
+
+            // Pages
+            builder.Services.AddTransient<HomePage>();
+            builder.Services.AddTransient<SettingsPage>();
+            builder.Services.AddTransient<AlarmLogPage>();
+
+            // Page models
+            builder.Services.AddTransient<HomePageModel>();
+            builder.Services.AddTransient<SettingsPageModel>();
+            builder.Services.AddTransient<AlarmLogPageModel>();
+
+            // Application services
             builder.Services.AddSingleton<ModalErrorHandler>();
-            builder.Services.AddSingleton<MainPageModel>();
-            builder.Services.AddSingleton<ProjectListPageModel>();
-            builder.Services.AddSingleton<ManageMetaPageModel>();
+            builder.Services.AddSingleton<NotificationService>();
+            builder.Services.AddSingleton<MotionDetectorService>();
+            builder.Services.AddSingleton<AlarmCoordinatorService>();
 
-            builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
-            builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
+            builder.Services.AddSingleton<IAlarmPlayer, NoOpAlarmPlayer>();
+            builder.Services.AddSingleton<IAlarmPlatformService, NoOpAlarmPlatformService>();
+            ConfigurePlatformServices(builder.Services);
 
-            return builder.Build();
+            var app = builder.Build();
+
+            app.Services.GetRequiredService<DatabaseInitializer>().InitializeAsync().GetAwaiter().GetResult();
+
+            return app;
         }
+
+        static partial void ConfigurePlatformServices(IServiceCollection services);
     }
 }
