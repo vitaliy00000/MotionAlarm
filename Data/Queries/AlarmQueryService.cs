@@ -12,13 +12,17 @@ public class AlarmQueryService
         _factory = factory;
     }
 
-    public async Task<IReadOnlyList<AlarmEvent>> GetAllAsync(
+    public async Task<IReadOnlyList<AlarmEvent>> GetPageAsync(
+        int skip,
+        int take,
         CancellationToken ct = default)
     {
         await using var db = await _factory.CreateDbContextAsync(ct);
 
         var events = await db.AlarmEvents
             .OrderByDescending(x => x.TriggeredAtUtc)
+            .Skip(skip)
+            .Take(take)
             .Select(x => new AlarmEvent
             {
                 Id = x.Id,

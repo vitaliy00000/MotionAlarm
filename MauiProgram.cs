@@ -37,13 +37,10 @@ namespace MotionAlarm
             builder.Services.AddTransient<AlarmLogPageModel>();
 
             // Application services
-            builder.Services.AddSingleton<ModalErrorHandler>();
             builder.Services.AddSingleton<NotificationService>();
             builder.Services.AddSingleton<MotionDetectorService>();
             builder.Services.AddSingleton<AlarmCoordinatorService>();
 
-            builder.Services.AddSingleton<IAlarmPlayer, NoOpAlarmPlayer>();
-            builder.Services.AddSingleton<IAlarmPlatformService, NoOpAlarmPlatformService>();
             ConfigurePlatformServices(builder.Services);
 
             var app = builder.Build();

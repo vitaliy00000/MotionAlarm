@@ -73,14 +73,16 @@ public sealed class AlarmCoordinatorService
 
         try
         {
-            (float accelThreshold, float gyroThreshold) = MapSensitivity(_current.Sensitivity);
+            (float accelThreshold, float gyroThreshold, int triggerWindowMs) = MapSensitivityProfile(
+                _current.Sensitivity,
+                _current.TriggerWindowMs);
 
             bool triggered = _detector.Process(
                 accelDelta,
                 gyroMagnitude,
                 accelThreshold,
                 gyroThreshold,
-                _current.TriggerWindowMs,
+                triggerWindowMs,
                 nowUtc);
 
             if (!triggered)
@@ -106,7 +108,6 @@ public sealed class AlarmCoordinatorService
             if (_current.SirenEnabled)
             {
                 await _player.PlayLoopAsync(ct);
-
                 Publish(AlarmRuntimeState.Sounding, "Виявлено рух! Сигналізація активна.", _armed, true);
             }
         }
@@ -116,22 +117,24 @@ public sealed class AlarmCoordinatorService
         }
     }
 
+    private static (float accel, float gyro, int triggerWindowMs) MapSensitivityProfile(int level, int defaultWindowMs)
+    {
+        return Math.Clamp(level, 1, 5) switch
+        {
+            1 => (3.0f, 2.0f, defaultWindowMs),
+            2 => (2.0f, 1.3f, defaultWindowMs),
+            3 => (1.2f, 0.7f, defaultWindowMs),
+            4 => (0.5f, 0.3f, defaultWindowMs),
+
+            // maximum possible sensitivity (will increase false positives)
+            5 => (0.08f, 0.04f, 80),
+
+            _ => (0.5f, 0.3f, defaultWindowMs)
+        };
+    }
     private void Publish(AlarmRuntimeState state, string message, bool isArmed, bool isAlarmSounding)
     {
         _status = new AlarmStatus(state, message, isArmed, isAlarmSounding);
         StatusChanged?.Invoke(_status);
-    }
-
-    private static (float accel, float gyro) MapSensitivity(int level)
-    {
-        return Math.Clamp(level, 1, 5) switch
-        {
-            1 => (4.0f, 2.5f), // Very low
-            2 => (3.0f, 2.0f), // Low
-            3 => (2.2f, 1.5f), // Medium
-            4 => (1.6f, 1.1f), // High
-            5 => (1.2f, 0.8f), // Very high
-            _ => (2.2f, 1.5f)
-        };
     }
 }

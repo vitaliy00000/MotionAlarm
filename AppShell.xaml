@@ -5,21 +5,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:MotionAlarm.Pages"
     Shell.FlyoutBehavior="Flyout"
+    Shell.BackgroundColor="{StaticResource AppBackground}"
+    Shell.ForegroundColor="{StaticResource TextPrimary}"
+    Shell.TitleColor="{StaticResource TextPrimary}"
+    Shell.UnselectedColor="{StaticResource TextSecondary}"
     Title="MotionAlarm">
 
-    <ShellContent
-        Title="Охорона"
-        ContentTemplate="{DataTemplate pages:HomePage}"
-        Route="home" />
-
-    <ShellContent
-        Title="Налаштування"
-        ContentTemplate="{DataTemplate pages:SettingsPage}"
-        Route="settings" />
-
-    <ShellContent
-        Title="Журнал спрацювань"
-        ContentTemplate="{DataTemplate pages:AlarmLogPage}"
-        Route="alarm-log" />
-
+    <ShellContent Title="Охорона" ContentTemplate="{DataTemplate pages:HomePage}" Route="home" />
+    <ShellContent Title="Налаштування" ContentTemplate="{DataTemplate pages:SettingsPage}" Route="settings" />
+    <ShellContent Title="Журнал спрацювань" ContentTemplate="{DataTemplate pages:AlarmLogPage}" Route="alarm-log" />
 </Shell>
