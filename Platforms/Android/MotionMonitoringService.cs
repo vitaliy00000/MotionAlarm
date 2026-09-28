@@ -6,56 +6,92 @@ using AndroidX.Core.App;
 
 namespace MotionAlarm;
 
-[Service(Name = "com.companyname.motionalarm.MotionMonitoringService",
+[Service(
+    Name = "com.companyname.motionalarm.MotionMonitoringService",
     Exported = false,
     ForegroundServiceType = Android.Content.PM.ForegroundService.TypeSpecialUse)]
 public class MotionMonitoringService : Service, ISensorEventListener
 {
     public const string ActionStart = "mationalarm.action.START";
     public const string ActionStop = "mationalarm.action.STOP";
+
     private const string ChannelId = "motion_alarm_channel";
     private const int NotificationId = 7010;
 
     private SensorManager? _sensorManager;
     private Sensor? _accelerometer;
     private Sensor? _gyroscope;
-    private AlarmCoordinatorService _coordinator;
+
+    private AlarmCoordinatorService? _coordinator;
+
+    private float _accelX;
+    private float _accelY;
+    private float _accelZ;
     private float _accelDelta;
+
     private float _gyroMagnitude;
+
+    private bool _hasAccelerometerData;
+    private bool _hasGyroscopeData;
     private bool _started;
 
     public override void OnCreate()
     {
         base.OnCreate();
-        _sensorManager = (SensorManager?)GetSystemService(SensorService);
-        _accelerometer = _sensorManager?.GetDefaultSensor(SensorType.Accelerometer);
-        _gyroscope = _sensorManager?.GetDefaultSensor(SensorType.Gyroscope);
 
-        _coordinator = IPlatformApplication.Current?.Services?.GetService<AlarmCoordinatorService>();
+        _sensorManager =
+            (SensorManager?)GetSystemService(SensorService);
+
+        _accelerometer =
+            _sensorManager?.GetDefaultSensor(
+                SensorType.Accelerometer);
+
+        _gyroscope =
+            _sensorManager?.GetDefaultSensor(
+                SensorType.Gyroscope);
+
+        _coordinator =
+            IPlatformApplication.Current?
+                .Services?
+                .GetService<AlarmCoordinatorService>();
     }
 
-    public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
+    public override StartCommandResult OnStartCommand(
+        Intent? intent,
+        StartCommandFlags flags,
+        int startId)
     {
         var action = intent?.Action ?? ActionStart;
+
         if (action == ActionStop)
         {
             StopSelf();
+
             return StartCommandResult.NotSticky;
         }
 
         EnsureNotificationChannel();
-        StartForeground(NotificationId, BuildNotification("Motion protection active"));
+
+        StartForeground(
+            NotificationId,
+            BuildNotification("Захист від руху активний"));
 
         if (!_started)
         {
             if (_accelerometer is not null)
             {
-                _sensorManager?.RegisterListener(this, _accelerometer, SensorDelay.Game);
+                _sensorManager?.RegisterListener(
+                    this,
+                    _accelerometer,
+                    SensorDelay.Game);
             }
 
             if (_gyroscope is not null)
             {
-                _sensorManager?.RegisterListener(this, _gyroscope, SensorDelay.Game);
+                _sensorManager?.RegisterListener(
+                    this,
+                    _gyroscope,
+                    SensorDelay.Game);
             }
 
             _started = true;
@@ -67,7 +103,12 @@ public class MotionMonitoringService : Service, ISensorEventListener
     public override void OnDestroy()
     {
         _sensorManager?.UnregisterListener(this);
+
         _started = false;
+
+        _hasAccelerometerData = false;
+        _hasGyroscopeData = false;
+
         base.OnDestroy();
     }
 
@@ -82,24 +123,60 @@ public class MotionMonitoringService : Service, ISensorEventListener
 
         if (e.Sensor.Type == SensorType.Accelerometer)
         {
-            var x = e.Values[0];
-            var y = e.Values[1];
-            var z = e.Values[2];
-            var magnitude = MathF.Sqrt(x * x + y * y + z * z);
-            _accelDelta = MathF.Abs(magnitude - SensorManager.GravityEarth);
+            _accelX = e.Values[0];
+            _accelY = e.Values[1];
+            _accelZ = e.Values[2];
+
+            var magnitude = MathF.Sqrt(
+                _accelX * _accelX +
+                _accelY * _accelY +
+                _accelZ * _accelZ);
+
+            _accelDelta = MathF.Abs(
+                magnitude - SensorManager.GravityEarth);
+
+            _hasAccelerometerData = true;
         }
         else if (e.Sensor.Type == SensorType.Gyroscope)
         {
-            var x = e.Values[0];
-            var y = e.Values[1];
-            var z = e.Values[2];
-            _gyroMagnitude = MathF.Sqrt(x * x + y * y + z * z);
+            var gyroX = e.Values[0];
+            var gyroY = e.Values[1];
+            var gyroZ = e.Values[2];
+
+            _gyroMagnitude = MathF.Sqrt(
+                gyroX * gyroX +
+                gyroY * gyroY +
+                gyroZ * gyroZ);
+
+            _hasGyroscopeData = true;
+        }
+        else
+        {
+            return;
         }
 
-        _ = _coordinator.HandleSensorAsync(_accelDelta, _gyroMagnitude, DateTimeOffset.UtcNow);
+        // Wait until both sensors have provided at least
+        // one reading so we don't send incomplete data.
+        if (!_hasAccelerometerData ||
+            !_hasGyroscopeData)
+        {
+            return;
+        }
+
+        _ = _coordinator.HandleSensorAsync(
+            _accelX,
+            _accelY,
+            _accelZ,
+            _accelDelta,
+            _gyroMagnitude,
+            DateTimeOffset.UtcNow);
     }
 
-    public void OnAccuracyChanged(Sensor? sensor, SensorStatus accuracy) { }
+    public void OnAccuracyChanged(
+        Sensor? sensor,
+        SensorStatus accuracy)
+    {
+    }
 
     private void EnsureNotificationChannel()
     {
@@ -108,15 +185,22 @@ public class MotionMonitoringService : Service, ISensorEventListener
             return;
         }
 
-        var manager = (NotificationManager)GetSystemService(NotificationService)!;
+        var manager =
+            (NotificationManager)GetSystemService(
+                NotificationService)!;
+
         if (manager.GetNotificationChannel(ChannelId) is not null)
         {
             return;
         }
 
-        var channel = new NotificationChannel(ChannelId, "Motion alarm monitoring", NotificationImportance.Low)
+        var channel = new NotificationChannel(
+            ChannelId,
+            "Motion alarm monitoring",
+            NotificationImportance.Low)
         {
-            Description = "Foreground monitoring for anti-theft alarm."
+            Description =
+                "Foreground monitoring for anti-theft alarm."
         };
 
         manager.CreateNotificationChannel(channel);
@@ -124,10 +208,21 @@ public class MotionMonitoringService : Service, ISensorEventListener
 
     private Notification BuildNotification(string text)
     {
-        var launchIntent = PackageManager?.GetLaunchIntentForPackage(PackageName);
-        var pendingIntent = PendingIntent.GetActivity(this, 0, launchIntent, PendingIntentFlags.Immutable | PendingIntentFlags.UpdateCurrent);
+        var launchIntent =
+            PackageManager?.GetLaunchIntentForPackage(
+                PackageName);
 
-        return new NotificationCompat.Builder(this, ChannelId)
+        var pendingIntent =
+            PendingIntent.GetActivity(
+                this,
+                0,
+                launchIntent,
+                PendingIntentFlags.Immutable |
+                PendingIntentFlags.UpdateCurrent);
+
+        return new NotificationCompat.Builder(
+                this,
+                ChannelId)
             .SetContentTitle("Motion Alarm")
             .SetContentText(text)
             .SetSmallIcon(Resource.Mipmap.appicon)

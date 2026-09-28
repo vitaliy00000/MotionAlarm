@@ -16,7 +16,7 @@
 		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
 
 		<!-- Application -->
-		<ApplicationTitle>MotionAlarm</ApplicationTitle>
+		<ApplicationTitle>Motion Alarm</ApplicationTitle>
 		<ApplicationId>com.companyname.motionalarm</ApplicationId>
 
 		<!-- Version -->
@@ -30,7 +30,7 @@
 	<ItemGroup>
 
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#17171a" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#192335" BaseSize="128,128" />
