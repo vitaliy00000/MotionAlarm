@@ -15,8 +15,7 @@ public enum AlarmRuntimeState
 public readonly record struct AlarmStatus(
     AlarmRuntimeState State,
     string Message,
-    bool IsArmed,
-    bool IsAlarmSounding);
+    bool IsArmed);
 
 public sealed class AlarmCoordinatorService
 {
@@ -37,7 +36,6 @@ public sealed class AlarmCoordinatorService
         new(
             AlarmRuntimeState.Disabled,
             "Охорону вимкнено",
-            false,
             false);
 
     public event Action<AlarmStatus>? StatusChanged;
@@ -56,7 +54,8 @@ public sealed class AlarmCoordinatorService
 
     public AlarmStatus GetStatus() => _status;
 
-    public async Task ArmAsync(CancellationToken ct = default)
+    public async Task ArmAsync(
+        CancellationToken ct = default)
     {
         await _gate.WaitAsync(ct);
 
@@ -73,8 +72,7 @@ public sealed class AlarmCoordinatorService
             Publish(
                 AlarmRuntimeState.Armed,
                 "Охорону увімкнено",
-                isArmed: true,
-                isAlarmSounding: false);
+                isArmed: true);
         }
         finally
         {
@@ -82,7 +80,8 @@ public sealed class AlarmCoordinatorService
         }
     }
 
-    public async Task DisarmAsync(CancellationToken ct = default)
+    public async Task DisarmAsync(
+        CancellationToken ct = default)
     {
         await _gate.WaitAsync(ct);
 
@@ -97,36 +96,7 @@ public sealed class AlarmCoordinatorService
             Publish(
                 AlarmRuntimeState.Disabled,
                 "Охорону вимкнено",
-                isArmed: false,
-                isAlarmSounding: false);
-        }
-        finally
-        {
-            _gate.Release();
-        }
-    }
-
-    public async Task StopSirenAsync(CancellationToken ct = default)
-    {
-        await _gate.WaitAsync(ct);
-
-        try
-        {
-            await _player.StopAsync(ct);
-
-            _detector.Reset();
-
-            Publish(
-                _armed
-                    ? AlarmRuntimeState.Armed
-                    : AlarmRuntimeState.Disabled,
-
-                _armed
-                    ? "Охорону увімкнено"
-                    : "Охорону вимкнено",
-
-                isArmed: _armed,
-                isAlarmSounding: false);
+                isArmed: false);
         }
         finally
         {
@@ -144,7 +114,9 @@ public sealed class AlarmCoordinatorService
         CancellationToken ct = default)
     {
         if (!_armed)
+        {
             return;
+        }
 
         await _gate.WaitAsync(ct);
 
@@ -177,7 +149,9 @@ public sealed class AlarmCoordinatorService
                 nowUtc);
 
             if (!triggered)
+            {
                 return;
+            }
 
             // Cooldown between processed/logged motion triggers.
             const int motionCooldownSeconds = 1;
@@ -194,11 +168,12 @@ public sealed class AlarmCoordinatorService
                 _lastLog = nowUtc;
             }
 
-            Publish(
-                AlarmRuntimeState.MotionDetected,
-                "Виявлено рух!",
-                _armed,
-                false);
+            if (_status.State is
+                    AlarmRuntimeState.MotionDetected or
+                    AlarmRuntimeState.Sounding)
+            {
+                return;
+            }
 
             if (_current.SirenEnabled)
             {
@@ -207,8 +182,14 @@ public sealed class AlarmCoordinatorService
                 Publish(
                     AlarmRuntimeState.Sounding,
                     "Виявлено рух! Сигналізація активна.",
-                    _armed,
-                    true);
+                    isArmed: _armed);
+            }
+            else
+            {
+                Publish(
+                    AlarmRuntimeState.MotionDetected,
+                    "Виявлено рух!",
+                    isArmed: _armed);
             }
         }
         finally
@@ -274,15 +255,22 @@ public sealed class AlarmCoordinatorService
     private void Publish(
         AlarmRuntimeState state,
         string message,
-        bool isArmed,
-        bool isAlarmSounding)
+        bool isArmed)
     {
-        _status = new AlarmStatus(
+        var newStatus = new AlarmStatus(
             state,
             message,
-            isArmed,
-            isAlarmSounding);
+            isArmed);
 
-        StatusChanged?.Invoke(_status);
+        // Do not notify subscribers if the status
+        // is exactly the same as the current status.
+        if (newStatus == _status)
+        {
+            return;
+        }
+
+        _status = newStatus;
+
+        StatusChanged?.Invoke(newStatus);
     }
 }

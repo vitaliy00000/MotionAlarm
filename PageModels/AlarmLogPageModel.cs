@@ -10,7 +10,6 @@ public partial class AlarmLogPageModel : ObservableObject
 {
     private const int PageSize = 10;
     private int _loadedCount;
-    private bool _isLoading;
 
     private readonly AlarmQueryService _alarmQueryService;
 
@@ -19,6 +18,7 @@ public partial class AlarmLogPageModel : ObservableObject
     [ObservableProperty] private bool isRefreshing;
     [ObservableProperty] private bool isEndOfList;
     [ObservableProperty] private bool canLoadMore;
+    [ObservableProperty] private bool isLoading;
 
     public AlarmLogPageModel(AlarmQueryService alarmQueryService)
     {
@@ -28,14 +28,14 @@ public partial class AlarmLogPageModel : ObservableObject
     [RelayCommand]
     public async Task LoadAsync()
     {
-        if (_isLoading)
+        if (IsLoading)
         {
             return;
         }
 
         try
         {
-            _isLoading = true;
+            IsLoading = true;
 
             _loadedCount = 0;
             IsEndOfList = false;
@@ -53,21 +53,21 @@ public partial class AlarmLogPageModel : ObservableObject
         }
         finally
         {
-            _isLoading = false;
+            IsLoading = false;
         }
     }
 
     [RelayCommand]
     private async Task LoadMoreAsync()
     {
-        if (_isLoading || IsEndOfList)
+        if (IsLoading || IsEndOfList)
         {
             return;
         }
 
         try
         {
-            _isLoading = true;
+            IsLoading = true;
 
             var page = await _alarmQueryService.GetPageAsync(_loadedCount, PageSize);
 
@@ -89,14 +89,14 @@ public partial class AlarmLogPageModel : ObservableObject
         }
         finally
         {
-            _isLoading = false;
+            IsLoading = false;
         }
     }
 
     [RelayCommand]
     private async Task RefreshAsync()
     {
-        if (_isLoading)
+        if (IsLoading)
         {
             return;
         }

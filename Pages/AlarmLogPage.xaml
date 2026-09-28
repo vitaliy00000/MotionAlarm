@@ -5,61 +5,129 @@
              x:Class="MotionAlarm.Pages.AlarmLogPage"
              Title="Журнал спрацювань">
 
-    <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="16">
+    <Grid Padding="20"
+          RowDefinitions="Auto,Auto,*,Auto"
+          RowSpacing="16">
 
-        <VerticalStackLayout Grid.Row="0" Spacing="4">
-            <Label Text="Журнал спрацювань" FontSize="28" FontAttributes="Bold" />
-            <Label Text="Історія зафіксованого руху" FontSize="15" TextColor="{StaticResource TextSecondary}" />
+        <!-- Header -->
+        <VerticalStackLayout Grid.Row="0"
+                             Spacing="4">
+
+            <Label Text="Журнал спрацювань"
+                   FontSize="28"
+                   FontAttributes="Bold" />
+
+            <Label Text="Історія зафіксованого руху"
+                   FontSize="15"
+                   TextColor="{StaticResource TextSecondary}" />
+
         </VerticalStackLayout>
 
-        <Border Grid.Row="1" Padding="16">
+
+        <!-- Summary -->
+        <Border Grid.Row="1"
+                Padding="16">
+
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="14" />
             </Border.StrokeShape>
-            <Label Text="{Binding Summary}" FontSize="18" FontAttributes="Bold" />
+
+            <Label Text="{Binding Summary}"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+
         </Border>
 
+
+        <!-- List -->
         <RefreshView Grid.Row="2"
                      IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshCommand}"
                      RefreshColor="{StaticResource AccentStrong}">
 
-            <CollectionView ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView ItemsSource="{Binding Items}"
+                            SelectionMode="None">
 
                 <CollectionView.EmptyView>
-                    <VerticalStackLayout Padding="30" Spacing="8" HorizontalOptions="Center" VerticalOptions="Center">
-                        <Label Text="Історія порожня" FontSize="20" FontAttributes="Bold" HorizontalTextAlignment="Center" />
-                        <Label Text="Зафіксованих спрацювань ще немає." FontSize="14" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" />
+
+                    <VerticalStackLayout Padding="30"
+                                         Spacing="8"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center">
+
+                        <Label Text="Історія порожня"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center" />
+
+                        <Label Text="Зафіксованих спрацювань ще немає."
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{StaticResource TextSecondary}" />
+
                     </VerticalStackLayout>
+
                 </CollectionView.EmptyView>
 
+
                 <CollectionView.ItemTemplate>
+
                     <DataTemplate x:DataType="models:AlarmEvent">
-                        <Border Margin="0,0,0,10" Padding="14">
+
+                        <Border Margin="0,0,0,10"
+                                Padding="14">
+
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="14" />
                             </Border.StrokeShape>
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="6">
-                                <Label Text="{Binding TriggeredAtUtc, StringFormat='{0:dd.MM.yyyy HH:mm}'}" FontSize="16" FontAttributes="Bold" />
-                                <Label Grid.Column="1" Text="{Binding TriggerCount, StringFormat='× {0}'}"
-                                       FontSize="15" FontAttributes="Bold" TextColor="{StaticResource AccentStrong}" />
-                                <Label Grid.Row="1" Text="{Binding Sensitivity, StringFormat='Чутливість: {0}'}"
-                                       FontSize="13" TextColor="{StaticResource TextSecondary}" />
-                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding SirenStatusText}"
-                                       FontSize="13" HorizontalTextAlignment="End" TextColor="{StaticResource TextSecondary}" />
+
+                            <Grid ColumnDefinitions="*,Auto"
+                                  RowDefinitions="Auto,Auto"
+                                  RowSpacing="6">
+
+                                <Label Text="{Binding TriggeredAtUtc, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+                                       FontSize="16"
+                                       FontAttributes="Bold" />
+
+                                <Label Grid.Column="1"
+                                       Text="{Binding TriggerCount, StringFormat='× {0}'}"
+                                       FontSize="15"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource AccentStrong}" />
+
+                                <Label Grid.Row="1"
+                                       Text="{Binding Sensitivity, StringFormat='Чутливість: {0}'}"
+                                       FontSize="13"
+                                       TextColor="{StaticResource TextSecondary}" />
+
+                                <Label Grid.Row="1"
+                                       Grid.Column="1"
+                                       Text="{Binding SirenStatusText}"
+                                       FontSize="13"
+                                       HorizontalTextAlignment="End"
+                                       TextColor="{StaticResource TextSecondary}" />
+
                             </Grid>
+
                         </Border>
+
                     </DataTemplate>
+
                 </CollectionView.ItemTemplate>
 
-                <CollectionView.Footer>
-                    <VerticalStackLayout Padding="0,8,0,20" Spacing="10">
-                        <Button Text="Завантажити ще"
-                                Command="{Binding LoadMoreCommand}"
-                                IsVisible="{Binding CanLoadMore}" />
-                    </VerticalStackLayout>
-                </CollectionView.Footer>
             </CollectionView>
+
         </RefreshView>
+
+
+        <!-- Load more -->
+        <Button Grid.Row="3"
+                Text="Завантажити ще"
+                Command="{Binding LoadMoreCommand}"
+                IsVisible="{Binding CanLoadMore}"
+                IsEnabled="{Binding IsLoading, Converter={StaticResource BooleanReverseConverter}}"
+                Margin="0,0,0,4" />
+
     </Grid>
+
 </ContentPage>

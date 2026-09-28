@@ -14,9 +14,6 @@ public partial class HomePageModel : ObservableObject, IDisposable
     private bool isArmed;
 
     [ObservableProperty]
-    private bool isAlarmSounding;
-
-    [ObservableProperty]
     private string statusMessage = "Охорону вимкнено";
 
     public HomePageModel(
@@ -82,14 +79,6 @@ public partial class HomePageModel : ObservableObject, IDisposable
         await _coordinator.ArmAsync();
     }
 
-    [RelayCommand]
-    public async Task StopAlarmSoundAsync()
-    {
-        await _coordinator.StopSirenAsync();
-
-        IsAlarmSounding = false;
-    }
-
     private void OnStatusChanged(AlarmStatus status)
     {
         MainThread.BeginInvokeOnMainThread(
@@ -100,6 +89,5 @@ public partial class HomePageModel : ObservableObject, IDisposable
     {
         StatusMessage = status.Message;
         IsArmed = status.IsArmed;
-        IsAlarmSounding = status.IsAlarmSounding;
     }
 }
