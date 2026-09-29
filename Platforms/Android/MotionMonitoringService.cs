@@ -86,6 +86,8 @@ public class MotionMonitoringService : Service, ISensorEventListener
                     SensorDelay.Game);
             }
 
+            // Gyroscope is optional.
+            // Accelerometer remains the primary sensor.
             if (_gyroscope is not null)
             {
                 _sensorManager?.RegisterListener(
@@ -155,10 +157,9 @@ public class MotionMonitoringService : Service, ISensorEventListener
             return;
         }
 
-        // Wait until both sensors have provided at least
-        // one reading so we don't send incomplete data.
-        if (!_hasAccelerometerData ||
-            !_hasGyroscopeData)
+        // Accelerometer is the primary sensor.
+        // Do not wait for the gyroscope.
+        if (!_hasAccelerometerData)
         {
             return;
         }
@@ -168,7 +169,9 @@ public class MotionMonitoringService : Service, ISensorEventListener
             _accelY,
             _accelZ,
             _accelDelta,
-            _gyroMagnitude,
+            _hasGyroscopeData
+                ? _gyroMagnitude
+                : 0f,
             DateTimeOffset.UtcNow);
     }
 

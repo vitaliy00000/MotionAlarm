@@ -22,19 +22,23 @@ public sealed class MotionDetectorService
         DateTimeOffset nowUtc)
     {
         // Establish the initial device orientation.
-        // The first sensor sample becomes the baseline.
+        // The first valid accelerometer sample becomes the baseline.
         if (!_hasBaseline)
         {
             SetBaseline(accelX, accelY, accelZ);
             return false;
         }
 
+        // Primary movement detection.
         bool accelerationDetected =
             accelDelta >= accelThreshold;
 
+        // Secondary movement detection.
+        // Gyroscope is optional and can be unavailable on some devices.
         bool rotationDetected =
             gyroMagnitude >= gyroThreshold;
 
+        // Primary detection for slow lifting/tilting.
         float orientationChange =
             GetOrientationChangeDegrees(
                 accelX,
@@ -46,8 +50,8 @@ public sealed class MotionDetectorService
 
         bool movementDetected =
             accelerationDetected ||
-            rotationDetected ||
-            orientationChanged;
+            orientationChanged ||
+            rotationDetected;
 
         if (!movementDetected)
         {
@@ -59,7 +63,8 @@ public sealed class MotionDetectorService
 
         // Movement must remain detected continuously
         // for the configured trigger window.
-        if ((nowUtc - _movementStarted.Value).TotalMilliseconds < triggerWindowMs)
+        if ((nowUtc - _movementStarted.Value).TotalMilliseconds
+            < triggerWindowMs)
         {
             return false;
         }
@@ -80,7 +85,10 @@ public sealed class MotionDetectorService
         _hasBaseline = false;
     }
 
-    private void SetBaseline(float x, float y, float z)
+    private void SetBaseline(
+        float x,
+        float y,
+        float z)
     {
         float length = MathF.Sqrt(
             x * x +
@@ -88,7 +96,9 @@ public sealed class MotionDetectorService
             z * z);
 
         if (length < 0.001f)
+        {
             return;
+        }
 
         _baselineX = x / length;
         _baselineY = y / length;
@@ -117,7 +127,8 @@ public sealed class MotionDetectorService
         y /= length;
         z /= length;
 
-        // Dot product between original and current orientation.
+        // Compare current gravity direction
+        // with the original device orientation.
         float dot =
             _baselineX * x +
             _baselineY * y +
@@ -125,6 +136,7 @@ public sealed class MotionDetectorService
 
         dot = Math.Clamp(dot, -1f, 1f);
 
-        return MathF.Acos(dot) * (180f / MathF.PI);
+        return MathF.Acos(dot) *
+               (180f / MathF.PI);
     }
 }
