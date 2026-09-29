@@ -12,15 +12,25 @@ public sealed class AlarmPlayer : IAlarmPlayer
         lock (_sync)
         {
             if (_player?.IsPlaying == true)
-            {
                 return Task.CompletedTask;
-            }
 
             _player?.Release();
+
             _player = new MediaPlayer();
-            var afd = Android.App.Application.Context.Assets.OpenFd("alarm.mp3");
-            _player.SetAudioAttributes(new AudioAttributes.Builder().SetUsage(AudioUsageKind.Alarm).Build());
-            _player.SetDataSource(afd.FileDescriptor, afd.StartOffset, afd.Length);
+
+            using var afd =
+                Android.App.Application.Context.Assets.OpenFd("alarm.mp3");
+
+            _player.SetAudioAttributes(
+                new AudioAttributes.Builder()
+                    .SetUsage(AudioUsageKind.Alarm)
+                    .Build());
+
+            _player.SetDataSource(
+                afd.FileDescriptor,
+                afd.StartOffset,
+                afd.Length);
+
             _player.Looping = true;
             _player.Prepare();
             _player.Start();
@@ -37,12 +47,12 @@ public sealed class AlarmPlayer : IAlarmPlayer
             {
                 return Task.CompletedTask;
             }
-
+                
             if (_player.IsPlaying)
             {
                 _player.Stop();
             }
-
+                
             _player.Release();
             _player.Dispose();
             _player = null;
