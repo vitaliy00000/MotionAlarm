@@ -17,8 +17,19 @@ public partial class AlarmLogPageModel : ObservableObject
     [ObservableProperty] private string _summary = FormatSummary("-");
     [ObservableProperty] private bool _isRefreshing;
     [ObservableProperty] private bool _isEndOfList;
-    [ObservableProperty] private bool _canLoadMore;
     [ObservableProperty] private bool _isLoading;
+
+    public bool ShowLoadMore => !IsLoading && !IsEndOfList;
+
+    partial void OnIsEndOfListChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ShowLoadMore));
+    }
+
+    partial void OnIsLoadingChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ShowLoadMore));
+    }
 
     public AlarmLogPageModel(AlarmQueryService alarmQueryService)
     {
@@ -31,9 +42,7 @@ public partial class AlarmLogPageModel : ObservableObject
     public async Task LoadAsync()
     {
         if (IsLoading)
-        {
             return;
-        }
 
         try
         {
@@ -41,17 +50,35 @@ public partial class AlarmLogPageModel : ObservableObject
 
             _loadedCount = 0;
             IsEndOfList = false;
-            CanLoadMore = false;
 
-            var page = await _alarmQueryService.GetPageAsync(_loadedCount, PageSize);
+            var totalCountTask =
+                _alarmQueryService.GetCountAsync();
+
+            var pageTask =
+                _alarmQueryService.GetPageAsync(
+                    0,
+                    PageSize);
+
+            var summaryTask =
+                _alarmQueryService.GetSummaryAsync(
+                    DateTime.Now);
+
+            await Task.WhenAll(
+                totalCountTask,
+                pageTask,
+                summaryTask);
+
+            var totalCount = await totalCountTask;
+            var page = await pageTask;
+            var summary = await summaryTask;
+
             Items = new ObservableCollection<AlarmEvent>(page);
-            _loadedCount += page.Count;
 
-            IsEndOfList = page.Count < PageSize;
-            CanLoadMore = Items.Count > 0 && !IsEndOfList;
+            _loadedCount = page.Count;
 
-            var s = await _alarmQueryService.GetSummaryAsync(DateTime.Now);
-            Summary = FormatSummary(s.Today);
+            IsEndOfList = _loadedCount >= totalCount;
+
+            Summary = FormatSummary(summary.Today);
         }
         finally
         {
@@ -76,7 +103,6 @@ public partial class AlarmLogPageModel : ObservableObject
             if (page.Count == 0)
             {
                 IsEndOfList = true;
-                CanLoadMore = false;
                 return;
             }
 
@@ -87,7 +113,6 @@ public partial class AlarmLogPageModel : ObservableObject
 
             _loadedCount += page.Count;
             IsEndOfList = page.Count < PageSize;
-            CanLoadMore = !IsEndOfList;
         }
         finally
         {

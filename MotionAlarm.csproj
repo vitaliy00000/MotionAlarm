@@ -62,18 +62,6 @@
 
 	</ItemGroup>
 
-	<ItemGroup>
-	  <MauiXaml Update="Pages\AlarmLogPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\HomePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\SettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	</ItemGroup>
-
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidFastDeployment>false</AndroidFastDeployment>

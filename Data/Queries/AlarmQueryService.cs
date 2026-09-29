@@ -44,6 +44,14 @@ public class AlarmQueryService
         return events;
     }
 
+    public async Task<int> GetCountAsync(
+        CancellationToken ct = default)
+    {
+        await using var db = await _factory.CreateDbContextAsync(ct);
+
+        return await db.AlarmEvents.CountAsync(ct);
+    }
+
     public async Task<(int Total, int Today, int ThisWeek)> GetSummaryAsync(
         DateTime nowLocal,
         CancellationToken ct = default)
