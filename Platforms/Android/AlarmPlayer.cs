@@ -12,7 +12,9 @@ public sealed class AlarmPlayer : IAlarmPlayer
         lock (_sync)
         {
             if (_player?.IsPlaying == true)
+            {
                 return Task.CompletedTask;
+            }
 
             _player?.Release();
 

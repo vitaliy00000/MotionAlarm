@@ -13,8 +13,8 @@ public partial class SettingsPageModel : ObservableObject
     private readonly NotificationService _notificationService;
     private AlarmSettings _settings = new();
 
-    [ObservableProperty] private bool sirenEnabled;
-    [ObservableProperty] private double sensitivity = 5;
+    [ObservableProperty] private bool _sirenEnabled;
+    [ObservableProperty] private double _sensitivity = 5;
 
     public SettingsPageModel(
         SettingsQueryService settingsQueryService,

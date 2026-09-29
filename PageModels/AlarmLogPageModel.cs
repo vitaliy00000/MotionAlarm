@@ -13,17 +13,19 @@ public partial class AlarmLogPageModel : ObservableObject
 
     private readonly AlarmQueryService _alarmQueryService;
 
-    [ObservableProperty] private ObservableCollection<AlarmEvent> items = new();
-    [ObservableProperty] private string summary = "Спрацювань сьогодні: -";
-    [ObservableProperty] private bool isRefreshing;
-    [ObservableProperty] private bool isEndOfList;
-    [ObservableProperty] private bool canLoadMore;
-    [ObservableProperty] private bool isLoading;
+    [ObservableProperty] private ObservableCollection<AlarmEvent> _items = new();
+    [ObservableProperty] private string _summary = FormatSummary("-");
+    [ObservableProperty] private bool _isRefreshing;
+    [ObservableProperty] private bool _isEndOfList;
+    [ObservableProperty] private bool _canLoadMore;
+    [ObservableProperty] private bool _isLoading;
 
     public AlarmLogPageModel(AlarmQueryService alarmQueryService)
     {
         _alarmQueryService = alarmQueryService;
     }
+
+    private static string FormatSummary(object count) => $"Спрацювань сьогодні: {count}";
 
     [RelayCommand]
     public async Task LoadAsync()
@@ -49,7 +51,7 @@ public partial class AlarmLogPageModel : ObservableObject
             CanLoadMore = Items.Count > 0 && !IsEndOfList;
 
             var s = await _alarmQueryService.GetSummaryAsync(DateTime.Now);
-            Summary = $"Спрацювань сьогодні: {s.Today}";
+            Summary = FormatSummary(s.Today);
         }
         finally
         {

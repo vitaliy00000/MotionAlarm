@@ -10,11 +10,9 @@ public partial class HomePageModel : ObservableObject, IDisposable
 
     private bool _disposed;
 
-    [ObservableProperty]
-    private bool isArmed;
+    [ObservableProperty] private bool _isArmed;
 
-    [ObservableProperty]
-    private string statusMessage = "Охорону вимкнено";
+    [ObservableProperty] private string _statusMessage = "Охорону вимкнено";
 
     public HomePageModel(
         IAlarmPlatformService platform,
