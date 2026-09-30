@@ -6,32 +6,15 @@
              x:DataType="pageModels:HomePageModel"
              Title="Охорона">
 
-    <Grid Padding="24"
-          RowDefinitions="Auto,*"
-          RowSpacing="24">
+    <Grid Padding="24">
 
-        <!-- Status -->
-        <VerticalStackLayout Grid.Row="0"
-                             Spacing="6"
-                             HorizontalOptions="Center">
-
-            <Label Text="{Binding StatusMessage}"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   HorizontalTextAlignment="Center"
-                   TextColor="{StaticResource TextPrimary}" />
-
-        </VerticalStackLayout>
-
-        <!-- Alarm button -->
-        <Grid Grid.Row="1"
-              HorizontalOptions="Center"
-              VerticalOptions="Center">
+        <Grid HorizontalOptions="Center"
+          VerticalOptions="Center">
 
             <Border WidthRequest="250"
-                    HeightRequest="250"
-                    StrokeThickness="8"
-                    BackgroundColor="{StaticResource BellSurface}">
+                HeightRequest="250"
+                StrokeThickness="8"
+                BackgroundColor="{StaticResource BellSurface}">
 
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="125" />
@@ -40,52 +23,62 @@
                 <Border.Triggers>
 
                     <DataTrigger TargetType="Border"
-                                 Binding="{Binding IsArmed}"
-                                 Value="True">
+                             Binding="{Binding IsArmed}"
+                             Value="True">
                         <Setter Property="Stroke"
-                                Value="{StaticResource AccentStrong}" />
+                            Value="{StaticResource AccentStrong}" />
                     </DataTrigger>
 
                     <DataTrigger TargetType="Border"
-                                 Binding="{Binding IsArmed}"
-                                 Value="False">
+                             Binding="{Binding IsArmed}"
+                             Value="False">
                         <Setter Property="Stroke"
-                                Value="{StaticResource Stroke}" />
+                            Value="{StaticResource Stroke}" />
                     </DataTrigger>
 
                 </Border.Triggers>
 
                 <Button Command="{Binding ToggleAlarmCommand}"
-                        BackgroundColor="Transparent"
-                        BorderWidth="0"
-                        CornerRadius="125"
-                        WidthRequest="250"
-                        HeightRequest="250"
-                        Padding="0"
-                        Margin="0"
-                        FontSize="28"
-                        FontAttributes="Bold"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Fill">
+                    IsEnabled="{Binding IsArming, Converter={StaticResource BooleanReverseConverter}}"
+                    BackgroundColor="Transparent"
+                    BorderWidth="0"
+                    CornerRadius="125"
+                    WidthRequest="250"
+                    HeightRequest="250"
+                    Padding="0"
+                    Margin="0"
+                    FontSize="28"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
 
                     <Button.Triggers>
 
                         <DataTrigger TargetType="Button"
-                                     Binding="{Binding IsArmed}"
-                                     Value="True">
+                                 Binding="{Binding IsArmed}"
+                                 Value="True">
                             <Setter Property="Text"
-                                    Value="ВИМКНУТИ" />
+                                Value="ВИМКНУТИ" />
                             <Setter Property="TextColor"
-                                    Value="{StaticResource AccentStrong}" />
+                                Value="{StaticResource AccentStrong}" />
                         </DataTrigger>
 
                         <DataTrigger TargetType="Button"
-                                     Binding="{Binding IsArmed}"
-                                     Value="False">
+                                 Binding="{Binding IsArmed}"
+                                 Value="False">
                             <Setter Property="Text"
-                                    Value="УВІМКНУТИ" />
+                                Value="УВІМКНУТИ" />
                             <Setter Property="TextColor"
-                                    Value="{StaticResource BellOutline}" />
+                                Value="{StaticResource BellOutline}" />
+                        </DataTrigger>
+
+                        <DataTrigger TargetType="Button"
+                                 Binding="{Binding IsArming}"
+                                 Value="True">
+                            <Setter Property="Text"
+                                Value="ЗАЧЕКАЙТЕ" />
+                            <Setter Property="TextColor"
+                                Value="{StaticResource TextSecondary}" />
                         </DataTrigger>
 
                     </Button.Triggers>
@@ -96,6 +89,32 @@
 
         </Grid>
 
-    </Grid>
+        <!-- Status at the top -->
+        <Grid HorizontalOptions="Center"
+          VerticalOptions="Start"
+          RowDefinitions="Auto,60"
+          RowSpacing="6">
 
+            <Label Grid.Row="0"
+               Text="{Binding StatusMessage}"
+               FontSize="18"
+               FontAttributes="Bold"
+               HorizontalTextAlignment="Center"
+               HorizontalOptions="Center"
+               TextColor="{StaticResource TextPrimary}" />
+
+            <Label Grid.Row="1"
+               IsVisible="{Binding HasArmCountdown}"
+               Text="{Binding ArmCountdownText}"
+               FontSize="42"
+               FontAttributes="Bold"
+               HorizontalTextAlignment="Center"
+               HorizontalOptions="Center"
+               HeightRequest="60"
+               VerticalTextAlignment="Center"
+               TextColor="{StaticResource TextPrimary}" />
+
+        </Grid>
+
+    </Grid>
 </ContentPage>

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MotionAlarm.Abstractions;
+using MotionAlarm.Data.Queries;
 
 namespace MotionAlarm.PageModels;
 
@@ -8,18 +9,25 @@ public partial class HomePageModel : ObservableObject, IDisposable
 {
     private readonly IAlarmPlatformService _platform;
     private readonly AlarmCoordinatorService _coordinator;
+    private readonly SettingsQueryService _settingsQueryService;
 
     private bool _disposed;
 
     [ObservableProperty] public partial bool IsArmed { get; set; }
     [ObservableProperty] public partial string StatusMessage { get; set; } = "Охорону вимкнено";
+    [ObservableProperty] public partial bool IsArming { get; set; }
+    [ObservableProperty] public partial string ArmCountdownText { get; set; } = string.Empty;
+
+    public bool HasArmCountdown => !string.IsNullOrWhiteSpace(ArmCountdownText);
 
     public HomePageModel(
         IAlarmPlatformService platform,
-        AlarmCoordinatorService coordinator)
+        AlarmCoordinatorService coordinator,
+        SettingsQueryService settingsQueryService)
     {
         _platform = platform;
         _coordinator = coordinator;
+        _settingsQueryService = settingsQueryService;
 
         _coordinator.StatusChanged += OnStatusChanged;
 
@@ -39,42 +47,71 @@ public partial class HomePageModel : ObservableObject, IDisposable
         _disposed = true;
     }
 
+    partial void OnArmCountdownTextChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasArmCountdown));
+    }
+
     [RelayCommand]
     public async Task ToggleAlarmAsync()
     {
-        if (IsArmed)
+        try
         {
-            await _platform.StopMonitoringAsync();
-            await _coordinator.DisarmAsync();
-            return;
+            IsArming = true;
+
+            if (IsArmed)
+            {
+                await _platform.StopMonitoringAsync();
+                await _coordinator.DisarmAsync();
+                return;
+            }
+
+            // POST_NOTIFICATIONS is only a runtime permission
+            // on Android 13+.
+            var permission =
+                await Permissions.RequestAsync<NotificationPermission>();
+
+            if (OperatingSystem.IsAndroidVersionAtLeast(33) &&
+                permission != PermissionStatus.Granted)
+            {
+                StatusMessage =
+                    "Дозвіл на сповіщення не надано. Неможливо запустити моніторинг.";
+
+                return;
+            }
+
+            var settings = await _settingsQueryService.GetAsync();
+
+            var started = await _platform.StartMonitoringAsync();
+
+            if (!started)
+            {
+                StatusMessage =
+                    "Не вдалося запустити службу моніторингу.";
+
+                return;
+            }
+
+            if(settings.ArmDelaySeconds > 0)
+            {
+                StatusMessage = "Охорону буде увімкнено";
+
+                for (var seconds = settings.ArmDelaySeconds; seconds > 0; seconds--)
+                {
+                    ArmCountdownText = seconds.ToString("00");
+
+                    await Task.Delay(1000);
+                }
+
+                ArmCountdownText = string.Empty;
+            }
+
+            await _coordinator.ArmAsync();
         }
-
-        // POST_NOTIFICATIONS is only a runtime permission
-        // on Android 13+.
-        var permission =
-            await Permissions.RequestAsync<NotificationPermission>();
-
-        if (OperatingSystem.IsAndroidVersionAtLeast(33) &&
-            permission != PermissionStatus.Granted)
+        finally
         {
-            StatusMessage =
-                "Дозвіл на сповіщення не надано. Неможливо запустити моніторинг.";
-
-            return;
+            IsArming = false;
         }
-
-        var started =
-            await _platform.StartMonitoringAsync();
-
-        if (!started)
-        {
-            StatusMessage =
-                "Не вдалося запустити службу моніторингу.";
-
-            return;
-        }
-
-        await _coordinator.ArmAsync();
     }
 
     private void OnStatusChanged(AlarmStatus status)

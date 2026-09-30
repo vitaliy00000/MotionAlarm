@@ -15,6 +15,7 @@ public partial class SettingsPageModel : ObservableObject
 
     [ObservableProperty] public partial bool SirenEnabled { get; set; }
     [ObservableProperty] public partial double Sensitivity { get; set; } = 5;
+    [ObservableProperty] public partial double ArmDelaySeconds { get; set; } = 0;
 
     public SettingsPageModel(
         SettingsQueryService settingsQueryService,
@@ -31,13 +32,17 @@ public partial class SettingsPageModel : ObservableObject
         _settings = await _settingsQueryService.GetAsync();
         SirenEnabled = _settings.SirenEnabled;
         Sensitivity = _settings.Sensitivity;
+        ArmDelaySeconds = _settings.ArmDelaySeconds;
     }
 
     [RelayCommand]
     private async Task SaveAsync()
     {
         _settings.SirenEnabled = SirenEnabled;
+
         _settings.Sensitivity = Math.Clamp((int)Math.Round(Sensitivity), 1, 5);
+
+        _settings.ArmDelaySeconds = Math.Clamp((int)Math.Round(ArmDelaySeconds), 0, 60);
 
         await _settingsCommandService.SaveAsync(_settings);
 
