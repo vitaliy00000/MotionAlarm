@@ -1,4 +1,6 @@
-﻿namespace MotionAlarm;
+﻿using MotionAlarm.Abstractions;
+
+namespace MotionAlarm;
 
 public static partial class MauiProgram
 {

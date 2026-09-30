@@ -13,6 +13,7 @@ public partial class AlarmLogPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _pageModel.LoadCommand.ExecuteAsync(null);
+
+        await _pageModel.LoadAsync();
     }
 }

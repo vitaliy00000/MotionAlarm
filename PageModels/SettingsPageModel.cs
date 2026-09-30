@@ -13,8 +13,8 @@ public partial class SettingsPageModel : ObservableObject
     private readonly NotificationService _notificationService;
     private AlarmSettings _settings = new();
 
-    [ObservableProperty] private bool _sirenEnabled;
-    [ObservableProperty] private double _sensitivity = 5;
+    [ObservableProperty] public partial bool SirenEnabled { get; set; }
+    [ObservableProperty] public partial double Sensitivity { get; set; } = 5;
 
     public SettingsPageModel(
         SettingsQueryService settingsQueryService,
@@ -26,7 +26,6 @@ public partial class SettingsPageModel : ObservableObject
         _notificationService = notificationService;
     }
 
-    [RelayCommand]
     public async Task LoadAsync()
     {
         _settings = await _settingsQueryService.GetAsync();
@@ -35,7 +34,7 @@ public partial class SettingsPageModel : ObservableObject
     }
 
     [RelayCommand]
-    public async Task SaveAsync()
+    private async Task SaveAsync()
     {
         _settings.SirenEnabled = SirenEnabled;
         _settings.Sensitivity = Math.Clamp((int)Math.Round(Sensitivity), 1, 5);

@@ -1,4 +1,4 @@
-﻿namespace MotionAlarm.Services;
+﻿namespace MotionAlarm.Abstractions;
 
 public interface IAlarmPlayer
 {

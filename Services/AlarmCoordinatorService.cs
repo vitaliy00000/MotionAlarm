@@ -1,4 +1,5 @@
-﻿using MotionAlarm.Data.Commands;
+﻿using MotionAlarm.Abstractions;
+using MotionAlarm.Data.Commands;
 using MotionAlarm.Data.Queries;
 using MotionAlarm.Models;
 

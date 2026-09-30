@@ -13,13 +13,20 @@ public partial class AlarmLogPageModel : ObservableObject
 
     private readonly AlarmQueryService _alarmQueryService;
 
-    [ObservableProperty] private ObservableCollection<AlarmEvent> _items = new();
-    [ObservableProperty] private string _summary = FormatSummary("-");
-    [ObservableProperty] private bool _isRefreshing;
-    [ObservableProperty] private bool _isEndOfList;
-    [ObservableProperty] private bool _isLoading;
+    [ObservableProperty] public partial ObservableCollection<AlarmEvent> Items { get; set; } = new();
+    [ObservableProperty] public partial string Summary { get; set; } = FormatSummary("-");
+    [ObservableProperty] public partial bool IsRefreshing { get; set; }
+    [ObservableProperty] public partial bool IsEndOfList { get; set; }
+    [ObservableProperty] public partial bool IsLoading { get; set; }
 
     public bool ShowLoadMore => !IsLoading && !IsEndOfList;
+
+    public AlarmLogPageModel(AlarmQueryService alarmQueryService)
+    {
+        _alarmQueryService = alarmQueryService;
+    }
+
+    private static string FormatSummary(object count) => $"Спрацювань сьогодні: {count}";
 
     partial void OnIsEndOfListChanged(bool value)
     {
@@ -31,18 +38,12 @@ public partial class AlarmLogPageModel : ObservableObject
         OnPropertyChanged(nameof(ShowLoadMore));
     }
 
-    public AlarmLogPageModel(AlarmQueryService alarmQueryService)
-    {
-        _alarmQueryService = alarmQueryService;
-    }
-
-    private static string FormatSummary(object count) => $"Спрацювань сьогодні: {count}";
-
-    [RelayCommand]
     public async Task LoadAsync()
     {
         if (IsLoading)
+        {
             return;
+        }
 
         try
         {

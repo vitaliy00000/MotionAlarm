@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MotionAlarm.Abstractions;
 
 namespace MotionAlarm.PageModels;
 
@@ -10,9 +11,8 @@ public partial class HomePageModel : ObservableObject, IDisposable
 
     private bool _disposed;
 
-    [ObservableProperty] private bool _isArmed;
-
-    [ObservableProperty] private string _statusMessage = "Охорону вимкнено";
+    [ObservableProperty] public partial bool IsArmed { get; set; }
+    [ObservableProperty] public partial string StatusMessage { get; set; } = "Охорону вимкнено";
 
     public HomePageModel(
         IAlarmPlatformService platform,

@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using MotionAlarm.Abstractions;
 
 namespace MotionAlarm;
 
