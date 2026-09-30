@@ -10,6 +10,7 @@ public enum AlarmRuntimeState
     Disabled,
     Armed,
     MotionDetected,
+    AlarmCountdown,
     Sounding
 }
 
@@ -30,6 +31,8 @@ public sealed class AlarmCoordinatorService
     private AlarmSettings _current = new();
 
     private DateTimeOffset _lastLog = DateTimeOffset.MinValue;
+
+    private CancellationTokenSource? _alarmCountdownCts;
 
     private bool _armed;
 
@@ -81,14 +84,17 @@ public sealed class AlarmCoordinatorService
         }
     }
 
-    public async Task DisarmAsync(
-        CancellationToken ct = default)
+    public async Task DisarmAsync(CancellationToken ct = default)
     {
         await _gate.WaitAsync(ct);
 
         try
         {
             _armed = false;
+
+            _alarmCountdownCts?.Cancel();
+            _alarmCountdownCts?.Dispose();
+            _alarmCountdownCts = null;
 
             _detector.Reset();
 
@@ -171,6 +177,7 @@ public sealed class AlarmCoordinatorService
 
             if (_status.State is
                     AlarmRuntimeState.MotionDetected or
+                    AlarmRuntimeState.AlarmCountdown or
                     AlarmRuntimeState.Sounding)
             {
                 return;
@@ -178,12 +185,34 @@ public sealed class AlarmCoordinatorService
 
             if (_current.SirenEnabled)
             {
-                await _player.PlayLoopAsync(ct);
+                if (_current.SoundDelaySeconds <= 0)
+                {
+                    await _player.PlayLoopAsync(ct);
+
+                    Publish(
+                        AlarmRuntimeState.Sounding,
+                        "Виявлено рух! Сигналізація активна.",
+                        isArmed: _armed);
+
+                    return;
+                }
+
+                _alarmCountdownCts?.Cancel();
+                _alarmCountdownCts?.Dispose();
+
+                _alarmCountdownCts =
+                    CancellationTokenSource.CreateLinkedTokenSource(ct);
+
+                var countdownToken = _alarmCountdownCts.Token;
 
                 Publish(
-                    AlarmRuntimeState.Sounding,
-                    "Виявлено рух! Сигналізація активна.",
+                    AlarmRuntimeState.AlarmCountdown,
+                    $"Виявлено рух! Сигналізація через {_current.SoundDelaySeconds} с.",
                     isArmed: _armed);
+
+                _ = StartAlarmCountdownAsync(
+                    _current.SoundDelaySeconds,
+                    countdownToken);
             }
             else
             {
@@ -196,6 +225,50 @@ public sealed class AlarmCoordinatorService
         finally
         {
             _gate.Release();
+        }
+    }
+
+    private async Task StartAlarmCountdownAsync(
+        int delaySeconds,
+        CancellationToken ct)
+    {
+        try
+        {
+            for (var seconds = delaySeconds; seconds > 0; seconds--)
+            {
+                await Task.Delay(1000, ct);
+
+                if (!_armed)
+                {
+                    return;
+                }
+            }
+
+            await _gate.WaitAsync(ct);
+
+            try
+            {
+                if (!_armed ||
+                    _status.State != AlarmRuntimeState.AlarmCountdown)
+                {
+                    return;
+                }
+
+                await _player.PlayLoopAsync(ct);
+
+                Publish(
+                    AlarmRuntimeState.Sounding,
+                    "Виявлено рух! Сигналізація активна.",
+                    isArmed: true);
+            }
+            finally
+            {
+                _gate.Release();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Countdown was cancelled intentionally.
         }
     }
 

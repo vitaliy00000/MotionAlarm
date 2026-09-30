@@ -62,6 +62,29 @@
                 </VerticalStackLayout>
             </Border>
 
+            <Border Padding="18">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Затримка сигналізації" FontSize="17" FontAttributes="Bold" />
+                    <Label Text="Час від виявлення руху до увімкнення сирени." FontSize="13" TextColor="{StaticResource TextSecondary}" />
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <Slider Minimum="0"
+                            Maximum="60"
+                            Value="{Binding SoundDelaySeconds}"
+                            MinimumTrackColor="{StaticResource AccentStrong}"
+                            MaximumTrackColor="{StaticResource Stroke}" />
+                        <Label Grid.Column="1"
+                           Text="{Binding SoundDelaySeconds, StringFormat='{0:0} с'}"
+                           FontSize="20" FontAttributes="Bold" WidthRequest="50"
+                           HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
             <Button Text="Зберегти" Command="{Binding SaveCommand}" Margin="0,4,0,10" />
         </VerticalStackLayout>
     </ScrollView>
