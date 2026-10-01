@@ -4,7 +4,8 @@
              xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
              x:Class="MotionAlarm.Pages.HomePage"
              x:DataType="pageModels:HomePageModel"
-             Title="Охорона">
+             Title="Охорона"
+             Shell.PresentationMode="NotAnimated">
 
     <Grid Padding="24">
 

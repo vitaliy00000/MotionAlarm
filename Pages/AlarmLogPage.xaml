@@ -5,7 +5,8 @@
              xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
              x:Class="MotionAlarm.Pages.AlarmLogPage"
              x:DataType="pageModels:AlarmLogPageModel"
-             Title="Журнал спрацювань">
+             Title="Журнал спрацювань"
+             Shell.PresentationMode="NotAnimated">
 
     <Grid Padding="20"
           RowDefinitions="Auto,Auto,*"

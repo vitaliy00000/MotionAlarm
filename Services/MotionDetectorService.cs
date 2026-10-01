@@ -71,6 +71,17 @@ public sealed class MotionDetectorService
 
         _movementStarted = null;
 
+        if (orientationChanged)
+        {
+            // The device may remain stationary in the new position.
+            // Update the baseline value so that this same position
+            // is not re-detected as movement.
+            SetBaseline(
+                accelX,
+                accelY,
+                accelZ);
+        }
+
         return true;
     }
 
