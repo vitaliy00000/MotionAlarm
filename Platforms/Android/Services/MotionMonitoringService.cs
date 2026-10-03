@@ -8,7 +8,7 @@ using MotionAlarm.Localization;
 namespace MotionAlarm;
 
 [Service(
-    Name = "com.companyname.motionalarm.MotionMonitoringService",
+    Name = "com.companyname.motionalarm.motionmonitoringservice",
     Exported = false,
     ForegroundServiceType = Android.Content.PM.ForegroundService.TypeSpecialUse)]
 public class MotionMonitoringService : Service, ISensorEventListener
