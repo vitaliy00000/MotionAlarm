@@ -18,6 +18,10 @@ public partial class SettingsPage : ContentPage
 
         _pageModel.CurrentState = PageModel.STATE_LOADING;
 
+        // Allow MAUI to render the loading state before continuing.
+        // Workaround for MAUI UI rendering timing issue.
+        await Task.Yield();
+
         await _pageModel.LoadAsync();
     }
 }
