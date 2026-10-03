@@ -1,6 +1,7 @@
 ﻿using MotionAlarm.Abstractions;
 using MotionAlarm.Data.Commands;
 using MotionAlarm.Data.Queries;
+using MotionAlarm.Localization;
 using MotionAlarm.Models;
 using System.Windows.Input;
 
@@ -34,14 +35,32 @@ public sealed class SettingsPageModel : PageModel
     public double ArmDelaySeconds
     {
         get => _armDelaySeconds;
-        set => SetProperty(ref _armDelaySeconds, value);
+        set
+        {
+            if(SetProperty(ref _armDelaySeconds, value))
+            {
+                OnPropertyChanged(nameof(ArmDelayText));
+            }
+        }
     }
 
     public double SoundDelaySeconds
     {
         get => _soundDelaySeconds;
-        set => SetProperty(ref _soundDelaySeconds, value);
+        set
+        {
+            if(SetProperty(ref _soundDelaySeconds, value))
+            {
+                OnPropertyChanged(nameof(SoundDelayText));
+            }
+        }
     }
+
+    public string SoundDelayText =>
+        $"{SoundDelaySeconds:0} {LocalizationResources.Instance["Common_Seconds"]}";
+
+    public string ArmDelayText =>
+        $"{ArmDelaySeconds:0} {LocalizationResources.Instance["Common_Seconds"]}";
 
     public ICommand SaveCommand { get; }
 
@@ -89,7 +108,6 @@ public sealed class SettingsPageModel : PageModel
 
         await _settingsCommandService.SaveAsync(_settings);
 
-        await _notificationService.ShowToastAsync(
-            "Налаштування збережено");
+        await _notificationService.ShowToastAsync(LocalizationResources.Instance["Settings_Saved"]);
     }
 }

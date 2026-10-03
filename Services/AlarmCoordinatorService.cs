@@ -16,7 +16,7 @@ public enum AlarmRuntimeState
 
 public readonly record struct AlarmStatus(
     AlarmRuntimeState State,
-    string Message,
+    int CountdownSeconds,
     bool IsArmed);
 
 public sealed class AlarmCoordinatorService
@@ -39,7 +39,7 @@ public sealed class AlarmCoordinatorService
     private AlarmStatus _status =
         new(
             AlarmRuntimeState.Disabled,
-            "Охорону вимкнено",
+            0,
             false);
 
     public event Action<AlarmStatus>? StatusChanged;
@@ -75,7 +75,6 @@ public sealed class AlarmCoordinatorService
 
             Publish(
                 AlarmRuntimeState.Armed,
-                "Охорону увімкнено",
                 isArmed: true);
         }
         finally
@@ -102,7 +101,6 @@ public sealed class AlarmCoordinatorService
 
             Publish(
                 AlarmRuntimeState.Disabled,
-                "Охорону вимкнено",
                 isArmed: false);
         }
         finally
@@ -191,7 +189,6 @@ public sealed class AlarmCoordinatorService
 
                     Publish(
                         AlarmRuntimeState.Sounding,
-                        "Виявлено рух! Сигналізація активна.",
                         isArmed: _armed);
 
                     return;
@@ -207,8 +204,8 @@ public sealed class AlarmCoordinatorService
 
                 Publish(
                     AlarmRuntimeState.AlarmCountdown,
-                    $"Виявлено рух! Сигналізація через {_current.SoundDelaySeconds} с.",
-                    isArmed: _armed);
+                    isArmed: _armed,
+                    countdownSeconds: _current.SoundDelaySeconds);
 
                 _ = StartAlarmCountdownAsync(
                     _current.SoundDelaySeconds,
@@ -218,7 +215,6 @@ public sealed class AlarmCoordinatorService
             {
                 Publish(
                     AlarmRuntimeState.MotionDetected,
-                    "Виявлено рух!",
                     isArmed: _armed);
             }
         }
@@ -236,6 +232,11 @@ public sealed class AlarmCoordinatorService
         {
             for (var seconds = delaySeconds; seconds > 0; seconds--)
             {
+                Publish(
+                    AlarmRuntimeState.AlarmCountdown,
+                    isArmed: true,
+                    countdownSeconds: seconds);
+
                 await Task.Delay(1000, ct);
 
                 if (!_armed)
@@ -258,7 +259,6 @@ public sealed class AlarmCoordinatorService
 
                 Publish(
                     AlarmRuntimeState.Sounding,
-                    "Виявлено рух! Сигналізація активна.",
                     isArmed: true);
             }
             finally
@@ -328,16 +328,14 @@ public sealed class AlarmCoordinatorService
 
     private void Publish(
         AlarmRuntimeState state,
-        string message,
-        bool isArmed)
+        bool isArmed,
+        int countdownSeconds = 0)
     {
         var newStatus = new AlarmStatus(
             state,
-            message,
+            countdownSeconds,
             isArmed);
 
-        // Do not notify subscribers if the status
-        // is exactly the same as the current status.
         if (newStatus == _status)
         {
             return;

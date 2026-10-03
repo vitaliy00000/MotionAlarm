@@ -2,15 +2,16 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
+             xmlns:local="clr-namespace:MotionAlarm.Localization"
              x:Class="MotionAlarm.Pages.SettingsPage"
              x:DataType="pageModels:SettingsPageModel"
-             Title="Налаштування">
+             Title="{local:Localization Settings_Title}">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="18">
             <VerticalStackLayout Spacing="4">
-                <Label Text="Налаштування" FontSize="28" FontAttributes="Bold" />
-                <Label Text="Налаштуйте роботу сигналізації" FontSize="15" TextColor="{StaticResource TextSecondary}" />
+                <Label Text="{local:Localization Settings_Title}" FontSize="28" FontAttributes="Bold" />
+                <Label Text="{local:Localization Settings_Description}" FontSize="15" TextColor="{StaticResource TextSecondary}" />
             </VerticalStackLayout>
 
             <Border Padding="18">
@@ -18,9 +19,9 @@
                     <RoundRectangle CornerRadius="16" />
                 </Border.StrokeShape>
                 <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="16">
-                    <Label Text="Звукова сигналізація" FontSize="17" FontAttributes="Bold" />
+                    <Label Text="{local:Localization Settings_Siren_Title}" FontSize="17" FontAttributes="Bold" />
                     <Switch Grid.Column="1" Grid.RowSpan="2" IsToggled="{Binding SirenEnabled}" VerticalOptions="Center" />
-                    <Label Grid.Row="1" Text="Відтворювати сирену після спрацювання" FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                    <Label Grid.Row="1" Text="{local:Localization Settings_Siren_Description}" FontSize="13" TextColor="{StaticResource TextSecondary}" />
                 </Grid>
             </Border>
 
@@ -29,8 +30,8 @@
                     <RoundRectangle CornerRadius="16" />
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Чутливість руху" FontSize="17" FontAttributes="Bold" />
-                    <Label Text="Вищий рівень означає більшу чутливість до руху." FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                    <Label Text="{local:Localization Settings_Sensitivity_Title}" FontSize="17" FontAttributes="Bold" />
+                    <Label Text="{local:Localization Settings_Sensitivity_Description}" FontSize="13" TextColor="{StaticResource TextSecondary}" />
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                         <Slider Minimum="1" Maximum="5" Value="{Binding Sensitivity}"
                                 MinimumTrackColor="{StaticResource AccentStrong}"
@@ -48,14 +49,14 @@
                 </Border.StrokeShape>
 
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Затримка постановки під охорону" FontSize="17" FontAttributes="Bold" />
-                    <Label Text="Час перед увімкненням охорони після натискання кнопки." FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                    <Label Text="{local:Localization Settings_ArmDelay_Title}" FontSize="17" FontAttributes="Bold" />
+                    <Label Text="{local:Localization Settings_ArmDelay_Description}" FontSize="13" TextColor="{StaticResource TextSecondary}" />
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                         <Slider Minimum="0" Maximum="60" Value="{Binding ArmDelaySeconds}"
                             MinimumTrackColor="{StaticResource AccentStrong}"
                             MaximumTrackColor="{StaticResource Stroke}" />
                         <Label Grid.Column="1"
-                               Text="{Binding ArmDelaySeconds, StringFormat='{0:0} с'}"
+                               Text="{Binding ArmDelayText}"
                                FontSize="20" FontAttributes="Bold" WidthRequest="50"
                                HorizontalTextAlignment="Center" VerticalOptions="Center" />
                     </Grid>
@@ -68,8 +69,8 @@
                 </Border.StrokeShape>
 
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Затримка сигналізації" FontSize="17" FontAttributes="Bold" />
-                    <Label Text="Час від виявлення руху до увімкнення сирени." FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                    <Label Text="{local:Localization Settings_SoundDelay_Title}" FontSize="17" FontAttributes="Bold" />
+                    <Label Text="{local:Localization Settings_SoundDelay_Description}" FontSize="13" TextColor="{StaticResource TextSecondary}" />
 
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                         <Slider Minimum="0"
@@ -78,14 +79,14 @@
                             MinimumTrackColor="{StaticResource AccentStrong}"
                             MaximumTrackColor="{StaticResource Stroke}" />
                         <Label Grid.Column="1"
-                           Text="{Binding SoundDelaySeconds, StringFormat='{0:0} с'}"
+                           Text="{Binding SoundDelayText}"
                            FontSize="20" FontAttributes="Bold" WidthRequest="50"
                            HorizontalTextAlignment="Center" VerticalOptions="Center" />
                     </Grid>
                 </VerticalStackLayout>
             </Border>
 
-            <Button Text="Зберегти" Command="{Binding SaveCommand}" Margin="0,4,0,10" />
+            <Button Text="{local:Localization Settings_Save}" Command="{Binding SaveCommand}" Margin="0,4,0,10" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

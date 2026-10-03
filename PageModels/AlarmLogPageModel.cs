@@ -1,4 +1,5 @@
 ﻿using MotionAlarm.Data.Queries;
+using MotionAlarm.Localization;
 using MotionAlarm.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -87,7 +88,7 @@ public sealed class AlarmLogPageModel : PageModel
     }
 
     private static string FormatSummary(object count)
-        => $"Спрацювань сьогодні: {count}";
+        => LocalizationResources.Instance.Format("AlarmLog_TodayCount", count);
 
     public async Task LoadAsync()
     {

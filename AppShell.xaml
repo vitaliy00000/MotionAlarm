@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:MotionAlarm.Pages"
     xmlns:f="clr-namespace:Fonts"
+    xmlns:local="clr-namespace:MotionAlarm.Localization"
     FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False"
     Shell.TabBarBackgroundColor="{StaticResource AppBackground}"
@@ -15,7 +16,7 @@
     <TabBar>
 
         <ShellContent
-            Title="Охорона"
+            Title="{local:Localization Home_Title}"
             Route="home"
             ContentTemplate="{DataTemplate pages:HomePage}">
             <ShellContent.Icon>
@@ -28,7 +29,7 @@
         </ShellContent>
 
         <ShellContent
-            Title="Журнал"
+            Title="{local:Localization AlarmLog_Title}"
             Route="alarm-log"
             ContentTemplate="{DataTemplate pages:AlarmLogPage}">
             <ShellContent.Icon>
@@ -41,7 +42,7 @@
         </ShellContent>
 
         <ShellContent
-            Title="Налаштування"
+            Title="{local:Localization Settings_Title}"
             Route="settings"
             ContentTemplate="{DataTemplate pages:SettingsPage}">
             <ShellContent.Icon>

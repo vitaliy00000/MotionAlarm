@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Hardware;
 using Android.OS;
 using AndroidX.Core.App;
+using MotionAlarm.Localization;
 
 namespace MotionAlarm;
 
@@ -74,7 +75,9 @@ public class MotionMonitoringService : Service, ISensorEventListener
 
         StartForeground(
             NotificationId,
-            BuildNotification("Захист від руху активний"));
+            BuildNotification(
+                LocalizationResources.Instance["Notification_MotionProtectionActive"]
+                ));
 
         if (!_started)
         {

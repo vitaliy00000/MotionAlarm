@@ -3,9 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:MotionAlarm.Models"
              xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
+             xmlns:local="clr-namespace:MotionAlarm.Localization"
              x:Class="MotionAlarm.Pages.AlarmLogPage"
              x:DataType="pageModels:AlarmLogPageModel"
-             Title="Журнал спрацювань">
+             Title="{local:Localization AlarmLog_Title}">
 
     <Grid Padding="20"
           RowDefinitions="Auto,Auto,*"
@@ -15,11 +16,11 @@
         <VerticalStackLayout Grid.Row="0"
                              Spacing="4">
 
-            <Label Text="Журнал спрацювань"
+            <Label Text="{local:Localization AlarmLog_Title}"
                    FontSize="28"
                    FontAttributes="Bold" />
 
-            <Label Text="Історія зафіксованого руху"
+            <Label Text="{local:Localization AlarmLog_Description}"
                    FontSize="15"
                    TextColor="{StaticResource TextSecondary}" />
 
@@ -56,12 +57,12 @@
                                          HorizontalOptions="Center"
                                          VerticalOptions="Center">
 
-                        <Label Text="Історія порожня"
+                        <Label Text="{local:Localization AlarmLog_Empty_Title}"
                                FontSize="20"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center" />
 
-                        <Label Text="Зафіксованих спрацювань ще немає."
+                        <Label Text="{local:Localization AlarmLog_Empty_Description}"
                                FontSize="14"
                                HorizontalTextAlignment="Center"
                                TextColor="{StaticResource TextSecondary}" />
@@ -96,7 +97,7 @@
                                        TextColor="{StaticResource AccentStrong}" />
 
                                 <Label Grid.Row="1"
-                                       Text="{Binding Sensitivity, StringFormat='Чутливість: {0}'}"
+                                       Text="{Binding SensitivityText}"
                                        FontSize="13"
                                        TextColor="{StaticResource TextSecondary}" />
 
@@ -121,7 +122,7 @@
                     <Grid Padding="0,6,0,4"
                           IsVisible="{Binding ShowLoadMore}">
 
-                        <Button Text="Завантажити ще"
+                        <Button Text="{local:Localization AlarmLog_LoadMore}"
                                 Command="{Binding LoadMoreCommand}"
                                 IsEnabled="{Binding IsLoading, Converter={StaticResource BooleanReverseConverter}}" />
 

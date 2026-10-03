@@ -1,5 +1,6 @@
 ﻿using MotionAlarm.Abstractions;
 using MotionAlarm.Data.Queries;
+using MotionAlarm.Localization;
 using System.Windows.Input;
 
 namespace MotionAlarm.PageModels;
@@ -12,9 +13,9 @@ public sealed class HomePageModel : PageModel, IDisposable
 
     private bool _disposed;
     private bool _isArmed;
-    private string _statusMessage = "Охорону вимкнено";
+    private string _statusMessage = LocalizationResources.Instance["Home_Status_Disarmed"];
     private bool _isArming;
-    private string _armCountdownText = string.Empty;
+    private string _countdownText = string.Empty;
 
     public bool IsArmed
     {
@@ -34,20 +35,20 @@ public sealed class HomePageModel : PageModel, IDisposable
         set => SetProperty(ref _isArming, value);
     }
 
-    public string ArmCountdownText
+    public string CountdownText
     {
-        get => _armCountdownText;
+        get => _countdownText;
         set
         {
-            if (SetProperty(ref _armCountdownText, value))
+            if (SetProperty(ref _countdownText, value))
             {
-                OnPropertyChanged(nameof(HasArmCountdown));
+                OnPropertyChanged(nameof(HasCountdown));
             }
         }
     }
 
-    public bool HasArmCountdown =>
-        !string.IsNullOrWhiteSpace(ArmCountdownText);
+    public bool HasCountdown =>
+        !string.IsNullOrWhiteSpace(CountdownText);
 
     public ICommand ToggleAlarmCommand { get; }
 
@@ -110,8 +111,7 @@ public sealed class HomePageModel : PageModel, IDisposable
             if (OperatingSystem.IsAndroidVersionAtLeast(33) &&
                 permission != PermissionStatus.Granted)
             {
-                StatusMessage =
-                    "Дозвіл на сповіщення не надано. Неможливо запустити моніторинг.";
+                StatusMessage = LocalizationResources.Instance["Home_NotificationPermissionDenied"];
 
                 return;
             }
@@ -122,26 +122,25 @@ public sealed class HomePageModel : PageModel, IDisposable
 
             if (!started)
             {
-                StatusMessage =
-                    "Не вдалося запустити службу моніторингу.";
+                StatusMessage = LocalizationResources.Instance["Home_MonitoringStartFailed"];
 
                 return;
             }
 
             if (settings.ArmDelaySeconds > 0)
             {
-                StatusMessage = "Охорону буде увімкнено";
+                StatusMessage = LocalizationResources.Instance["Home_ArmingSoon"];
 
                 for (var seconds = settings.ArmDelaySeconds;
                      seconds > 0;
                      seconds--)
                 {
-                    ArmCountdownText = seconds.ToString("00");
+                    CountdownText = seconds.ToString("00");
 
                     await Task.Delay(1000);
                 }
 
-                ArmCountdownText = string.Empty;
+                CountdownText = string.Empty;
             }
 
             await _coordinator.ArmAsync();
@@ -161,7 +160,31 @@ public sealed class HomePageModel : PageModel, IDisposable
 
     private void ApplyStatus(AlarmStatus status)
     {
-        StatusMessage = status.Message;
+        StatusMessage = status.State switch
+        {
+            AlarmRuntimeState.Disabled =>
+                LocalizationResources.Instance["Alarm_Status_Disarmed"],
+
+            AlarmRuntimeState.Armed =>
+                LocalizationResources.Instance["Alarm_Status_Armed"],
+
+            AlarmRuntimeState.MotionDetected =>
+                LocalizationResources.Instance["Alarm_MotionDetected"],
+
+            AlarmRuntimeState.AlarmCountdown =>
+                LocalizationResources.Instance["Alarm_AlarmCountdown"],
+
+            AlarmRuntimeState.Sounding =>
+                LocalizationResources.Instance["Alarm_AlarmActive"],
+
+            _ => string.Empty
+        };
+
+        CountdownText =
+            status.State == AlarmRuntimeState.AlarmCountdown
+                ? status.CountdownSeconds.ToString("00")
+                : string.Empty;
+
         IsArmed = status.IsArmed;
 
         UpdateCommandState();

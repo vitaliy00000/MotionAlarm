@@ -2,9 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
+             xmlns:local="clr-namespace:MotionAlarm.Localization"
              x:Class="MotionAlarm.Pages.HomePage"
              x:DataType="pageModels:HomePageModel"
-             Title="Охорона">
+             Title="{local:Localization Home_Title}">
 
     <Grid Padding="24">
 
@@ -54,30 +55,39 @@
 
                     <Button.Triggers>
 
-                        <DataTrigger TargetType="Button"
-                                 Binding="{Binding IsArmed}"
-                                 Value="True">
-                            <Setter Property="Text"
-                                Value="ВИМКНУТИ" />
-                            <Setter Property="TextColor"
+                        <DataTrigger
+                            TargetType="Button"
+                            Binding="{Binding IsArmed}"
+                            Value="True">
+                            <Setter
+                                Property="Text"
+                                Value="{local:Localization Home_Alarm_Disable}" />
+                            <Setter
+                                Property="TextColor"
                                 Value="{StaticResource AccentStrong}" />
                         </DataTrigger>
 
-                        <DataTrigger TargetType="Button"
-                                 Binding="{Binding IsArmed}"
-                                 Value="False">
-                            <Setter Property="Text"
-                                Value="УВІМКНУТИ" />
-                            <Setter Property="TextColor"
+                        <DataTrigger
+                            TargetType="Button"
+                            Binding="{Binding IsArmed}"
+                            Value="False">
+                            <Setter
+                                Property="Text"
+                                Value="{local:Localization Home_Alarm_Enable}" />
+                            <Setter
+                                Property="TextColor"
                                 Value="{StaticResource BellOutline}" />
                         </DataTrigger>
 
-                        <DataTrigger TargetType="Button"
-                                 Binding="{Binding IsArming}"
-                                 Value="True">
-                            <Setter Property="Text"
-                                Value="ЗАЧЕКАЙТЕ" />
-                            <Setter Property="TextColor"
+                        <DataTrigger
+                            TargetType="Button"
+                            Binding="{Binding IsArming}"
+                            Value="True">
+                            <Setter
+                                Property="Text"
+                                Value="{local:Localization Home_Alarm_Wait}" />
+                            <Setter
+                                Property="TextColor"
                                 Value="{StaticResource TextSecondary}" />
                         </DataTrigger>
 
@@ -104,8 +114,8 @@
                TextColor="{StaticResource TextPrimary}" />
 
             <Label Grid.Row="1"
-               IsVisible="{Binding HasArmCountdown}"
-               Text="{Binding ArmCountdownText}"
+               IsVisible="{Binding HasCountdown}"
+               Text="{Binding CountdownText}"
                FontSize="42"
                FontAttributes="Bold"
                HorizontalTextAlignment="Center"
