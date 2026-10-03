@@ -1,130 +1,173 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
-             xmlns:local="clr-namespace:MotionAlarm.Localization"
-             x:Class="MotionAlarm.Pages.HomePage"
-             x:DataType="pageModels:HomePageModel"
-             Title="{local:Localization Home_Title}">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
+    xmlns:components="clr-namespace:MotionAlarm.Pages.Components"
+    xmlns:local="clr-namespace:MotionAlarm.Localization"
+    x:Class="MotionAlarm.Pages.HomePage"
+    x:DataType="pageModels:HomePageModel"
+    BackgroundColor="{StaticResource AppBackground}"
+    Title="{local:Localization Home_Title}">
 
-    <Grid Padding="24">
+    <Grid>
 
-        <Grid HorizontalOptions="Center"
-          VerticalOptions="Center">
+        <!-- Main content -->
+        <Grid
+            Padding="24"
+            IsVisible="{Binding [STATE_CONTENT]}">
 
-            <Border WidthRequest="250"
-                HeightRequest="250"
-                StrokeThickness="8"
-                BackgroundColor="{StaticResource BellSurface}">
+            <!-- Alarm button -->
+            <Grid
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
 
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="125" />
-                </Border.StrokeShape>
-
-                <Border.Triggers>
-
-                    <DataTrigger TargetType="Border"
-                             Binding="{Binding IsArmed}"
-                             Value="True">
-                        <Setter Property="Stroke"
-                            Value="{StaticResource AccentStrong}" />
-                    </DataTrigger>
-
-                    <DataTrigger TargetType="Border"
-                             Binding="{Binding IsArmed}"
-                             Value="False">
-                        <Setter Property="Stroke"
-                            Value="{StaticResource Stroke}" />
-                    </DataTrigger>
-
-                </Border.Triggers>
-
-                <Button Command="{Binding ToggleAlarmCommand}"
-                    IsEnabled="{Binding IsArming, Converter={StaticResource BooleanReverseConverter}}"
-                    BackgroundColor="Transparent"
-                    BorderWidth="0"
-                    CornerRadius="125"
+                <Border
                     WidthRequest="250"
                     HeightRequest="250"
-                    Padding="0"
-                    Margin="0"
-                    FontSize="28"
-                    FontAttributes="Bold"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
+                    StrokeThickness="8"
+                    BackgroundColor="{StaticResource BellSurface}">
 
-                    <Button.Triggers>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="125" />
+                    </Border.StrokeShape>
+
+                    <Border.Triggers>
 
                         <DataTrigger
-                            TargetType="Button"
+                            TargetType="Border"
                             Binding="{Binding IsArmed}"
                             Value="True">
+
                             <Setter
-                                Property="Text"
-                                Value="{local:Localization Home_Alarm_Disable}" />
-                            <Setter
-                                Property="TextColor"
+                                Property="Stroke"
                                 Value="{StaticResource AccentStrong}" />
+
                         </DataTrigger>
 
                         <DataTrigger
-                            TargetType="Button"
+                            TargetType="Border"
                             Binding="{Binding IsArmed}"
                             Value="False">
+
                             <Setter
-                                Property="Text"
-                                Value="{local:Localization Home_Alarm_Enable}" />
-                            <Setter
-                                Property="TextColor"
-                                Value="{StaticResource BellOutline}" />
+                                Property="Stroke"
+                                Value="{StaticResource Stroke}" />
+
                         </DataTrigger>
 
-                        <DataTrigger
-                            TargetType="Button"
-                            Binding="{Binding IsArming}"
-                            Value="True">
-                            <Setter
-                                Property="Text"
-                                Value="{local:Localization Home_Alarm_Wait}" />
-                            <Setter
-                                Property="TextColor"
-                                Value="{StaticResource TextSecondary}" />
-                        </DataTrigger>
+                    </Border.Triggers>
 
-                    </Button.Triggers>
+                    <Button
+                        Command="{Binding ToggleAlarmCommand}"
+                        IsEnabled="{Binding IsArming, Converter={StaticResource BooleanReverseConverter}}"
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        CornerRadius="125"
+                        WidthRequest="250"
+                        HeightRequest="250"
+                        Padding="0"
+                        Margin="0"
+                        FontSize="28"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
 
-                </Button>
+                        <Button.Triggers>
 
-            </Border>
+                            <DataTrigger
+                                TargetType="Button"
+                                Binding="{Binding IsArmed}"
+                                Value="True">
+
+                                <Setter
+                                    Property="Text"
+                                    Value="{local:Localization Home_Alarm_Disable}" />
+
+                                <Setter
+                                    Property="TextColor"
+                                    Value="{StaticResource AccentStrong}" />
+
+                            </DataTrigger>
+
+                            <DataTrigger
+                                TargetType="Button"
+                                Binding="{Binding IsArmed}"
+                                Value="False">
+
+                                <Setter
+                                    Property="Text"
+                                    Value="{local:Localization Home_Alarm_Enable}" />
+
+                                <Setter
+                                    Property="TextColor"
+                                    Value="{StaticResource BellOutline}" />
+
+                            </DataTrigger>
+
+                            <DataTrigger
+                                TargetType="Button"
+                                Binding="{Binding IsArming}"
+                                Value="True">
+
+                                <Setter
+                                    Property="Text"
+                                    Value="{local:Localization Home_Alarm_Wait}" />
+
+                                <Setter
+                                    Property="TextColor"
+                                    Value="{StaticResource TextSecondary}" />
+
+                            </DataTrigger>
+
+                        </Button.Triggers>
+
+                    </Button>
+
+                </Border>
+
+            </Grid>
+
+            <!-- Status -->
+            <Grid
+                HorizontalOptions="Center"
+                VerticalOptions="Start"
+                RowDefinitions="Auto,60"
+                RowSpacing="6">
+
+                <Label
+                    Grid.Row="0"
+                    Text="{Binding StatusMessage}"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    HorizontalOptions="Center"
+                    TextColor="{StaticResource TextPrimary}" />
+
+                <Label
+                    Grid.Row="1"
+                    IsVisible="{Binding HasCountdown}"
+                    Text="{Binding CountdownText}"
+                    FontSize="42"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    HorizontalOptions="Center"
+                    HeightRequest="60"
+                    VerticalTextAlignment="Center"
+                    TextColor="{StaticResource TextPrimary}" />
+
+            </Grid>
 
         </Grid>
 
-        <!-- Status at the top -->
-        <Grid HorizontalOptions="Center"
-          VerticalOptions="Start"
-          RowDefinitions="Auto,60"
-          RowSpacing="6">
+        <!-- Loading overlay -->
+        <components:LoadingOverlay
+            IsVisible="{Binding [STATE_LOADING]}" />
 
-            <Label Grid.Row="0"
-               Text="{Binding StatusMessage}"
-               FontSize="18"
-               FontAttributes="Bold"
-               HorizontalTextAlignment="Center"
-               HorizontalOptions="Center"
-               TextColor="{StaticResource TextPrimary}" />
-
-            <Label Grid.Row="1"
-               IsVisible="{Binding HasCountdown}"
-               Text="{Binding CountdownText}"
-               FontSize="42"
-               FontAttributes="Bold"
-               HorizontalTextAlignment="Center"
-               HorizontalOptions="Center"
-               HeightRequest="60"
-               VerticalTextAlignment="Center"
-               TextColor="{StaticResource TextPrimary}" />
-
-        </Grid>
+        <!-- Error overlay -->
+        <components:ErrorOverlay
+            IsVisible="{Binding [STATE_ERROR]}" />
 
     </Grid>
+
 </ContentPage>

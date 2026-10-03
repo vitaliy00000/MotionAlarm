@@ -13,7 +13,10 @@ public sealed class HomePageModel : PageModel, IDisposable
 
     private bool _disposed;
     private bool _isArmed;
-    private string _statusMessage = LocalizationResources.Instance["Home_Status_Disarmed"];
+
+    private string _statusMessage =
+        LocalizationResources.Instance["Home_Status_Disarmed"];
+
     private bool _isArming;
     private string _countdownText = string.Empty;
 
@@ -67,6 +70,8 @@ public sealed class HomePageModel : PageModel, IDisposable
 
         _coordinator.StatusChanged += OnStatusChanged;
 
+        CurrentState = STATE_CONTENT;
+
         // Sync current app-wide state immediately.
         ApplyStatus(_coordinator.GetStatus());
     }
@@ -111,31 +116,40 @@ public sealed class HomePageModel : PageModel, IDisposable
             if (OperatingSystem.IsAndroidVersionAtLeast(33) &&
                 permission != PermissionStatus.Granted)
             {
-                StatusMessage = LocalizationResources.Instance["Home_NotificationPermissionDenied"];
+                StatusMessage =
+                    LocalizationResources.Instance[
+                        "Home_NotificationPermissionDenied"];
 
                 return;
             }
 
-            var settings = await _settingsQueryService.GetAsync();
+            var settings =
+                await _settingsQueryService.GetAsync();
 
-            var started = await _platform.StartMonitoringAsync();
+            var started =
+                await _platform.StartMonitoringAsync();
 
             if (!started)
             {
-                StatusMessage = LocalizationResources.Instance["Home_MonitoringStartFailed"];
+                StatusMessage =
+                    LocalizationResources.Instance[
+                        "Home_MonitoringStartFailed"];
 
                 return;
             }
 
             if (settings.ArmDelaySeconds > 0)
             {
-                StatusMessage = LocalizationResources.Instance["Home_ArmingSoon"];
+                StatusMessage =
+                    LocalizationResources.Instance[
+                        "Home_ArmingSoon"];
 
                 for (var seconds = settings.ArmDelaySeconds;
                      seconds > 0;
                      seconds--)
                 {
-                    CountdownText = seconds.ToString("00");
+                    CountdownText =
+                        seconds.ToString("00");
 
                     await Task.Delay(1000);
                 }
@@ -144,6 +158,11 @@ public sealed class HomePageModel : PageModel, IDisposable
             }
 
             await _coordinator.ArmAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMsg = ex.Message;
+            CurrentState = STATE_ERROR;
         }
         finally
         {
@@ -163,19 +182,24 @@ public sealed class HomePageModel : PageModel, IDisposable
         StatusMessage = status.State switch
         {
             AlarmRuntimeState.Disabled =>
-                LocalizationResources.Instance["Alarm_Status_Disarmed"],
+                LocalizationResources.Instance[
+                    "Alarm_Status_Disarmed"],
 
             AlarmRuntimeState.Armed =>
-                LocalizationResources.Instance["Alarm_Status_Armed"],
+                LocalizationResources.Instance[
+                    "Alarm_Status_Armed"],
 
             AlarmRuntimeState.MotionDetected =>
-                LocalizationResources.Instance["Alarm_MotionDetected"],
+                LocalizationResources.Instance[
+                    "Alarm_MotionDetected"],
 
             AlarmRuntimeState.AlarmCountdown =>
-                LocalizationResources.Instance["Alarm_AlarmCountdown"],
+                LocalizationResources.Instance[
+                    "Alarm_AlarmCountdown"],
 
             AlarmRuntimeState.Sounding =>
-                LocalizationResources.Instance["Alarm_AlarmActive"],
+                LocalizationResources.Instance[
+                    "Alarm_AlarmActive"],
 
             _ => string.Empty
         };

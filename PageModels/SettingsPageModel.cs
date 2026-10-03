@@ -37,7 +37,7 @@ public sealed class SettingsPageModel : PageModel
         get => _armDelaySeconds;
         set
         {
-            if(SetProperty(ref _armDelaySeconds, value))
+            if (SetProperty(ref _armDelaySeconds, value))
             {
                 OnPropertyChanged(nameof(ArmDelayText));
             }
@@ -49,7 +49,7 @@ public sealed class SettingsPageModel : PageModel
         get => _soundDelaySeconds;
         set
         {
-            if(SetProperty(ref _soundDelaySeconds, value))
+            if (SetProperty(ref _soundDelaySeconds, value))
             {
                 OnPropertyChanged(nameof(SoundDelayText));
             }
@@ -79,12 +79,24 @@ public sealed class SettingsPageModel : PageModel
 
     public async Task LoadAsync()
     {
-        _settings = await _settingsQueryService.GetAsync();
+        CurrentState = STATE_LOADING;
 
-        SirenEnabled = _settings.SirenEnabled;
-        Sensitivity = _settings.Sensitivity;
-        ArmDelaySeconds = _settings.ArmDelaySeconds;
-        SoundDelaySeconds = _settings.SoundDelaySeconds;
+        try
+        {
+            _settings = await _settingsQueryService.GetAsync();
+
+            SirenEnabled = _settings.SirenEnabled;
+            Sensitivity = _settings.Sensitivity;
+            ArmDelaySeconds = _settings.ArmDelaySeconds;
+            SoundDelaySeconds = _settings.SoundDelaySeconds;
+
+            CurrentState = STATE_CONTENT;
+        }
+        catch (Exception ex)
+        {
+            ErrorMsg = ex.Message;
+            CurrentState = STATE_ERROR;
+        }
     }
 
     private async Task SaveAsync()
@@ -108,6 +120,7 @@ public sealed class SettingsPageModel : PageModel
 
         await _settingsCommandService.SaveAsync(_settings);
 
-        await _notificationService.ShowToastAsync(LocalizationResources.Instance["Settings_Saved"]);
+        await _notificationService.ShowToastAsync(
+            LocalizationResources.Instance["Settings_Saved"]);
     }
 }

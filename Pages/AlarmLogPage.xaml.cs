@@ -4,17 +4,18 @@ public partial class AlarmLogPage : ContentPage
 {
     private readonly AlarmLogPageModel _pageModel;
 
-    public AlarmLogPage(AlarmLogPageModel pageModel)
+    public AlarmLogPage(AlarmLogPageModel viewModel)
     {
         InitializeComponent();
 
-        _pageModel = pageModel;
-        BindingContext = _pageModel;
+        BindingContext = _pageModel = viewModel;
     }
 
-    protected override async void OnAppearing()
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
+
+        _pageModel.CurrentState = PageModel.STATE_LOADING;
 
         await _pageModel.LoadAsync();
     }

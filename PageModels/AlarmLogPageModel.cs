@@ -13,8 +13,11 @@ public sealed class AlarmLogPageModel : PageModel
     private readonly AlarmQueryService _alarmQueryService;
 
     private int _loadedCount;
+
     private ObservableCollection<AlarmEvent> _items = new();
+
     private string _summary = FormatSummary("-");
+
     private bool _isRefreshing;
     private bool _isEndOfList;
     private bool _isLoading;
@@ -69,12 +72,15 @@ public sealed class AlarmLogPageModel : PageModel
         }
     }
 
-    public bool ShowLoadMore => !IsLoading && !IsEndOfList;
+    public bool ShowLoadMore =>
+        !IsLoading && !IsEndOfList;
 
     public ICommand LoadMoreCommand { get; }
+
     public ICommand RefreshCommand { get; }
 
-    public AlarmLogPageModel(AlarmQueryService alarmQueryService)
+    public AlarmLogPageModel(
+        AlarmQueryService alarmQueryService)
     {
         _alarmQueryService = alarmQueryService;
 
@@ -88,7 +94,9 @@ public sealed class AlarmLogPageModel : PageModel
     }
 
     private static string FormatSummary(object count)
-        => LocalizationResources.Instance.Format("AlarmLog_TodayCount", count);
+        => LocalizationResources.Instance.Format(
+            "AlarmLog_TodayCount",
+            count);
 
     public async Task LoadAsync()
     {
@@ -99,14 +107,21 @@ public sealed class AlarmLogPageModel : PageModel
 
         try
         {
+            CurrentState = STATE_LOADING;
+
             IsLoading = true;
 
             _loadedCount = 0;
             IsEndOfList = false;
 
-            var totalCountTask = _alarmQueryService.GetCountAsync();
-            var pageTask = _alarmQueryService.GetPageAsync(0, PageSize);
-            var summaryTask = _alarmQueryService.GetSummaryAsync(DateTime.Now);
+            var totalCountTask =
+                _alarmQueryService.GetCountAsync();
+
+            var pageTask =
+                _alarmQueryService.GetPageAsync(0, PageSize);
+
+            var summaryTask =
+                _alarmQueryService.GetSummaryAsync(DateTime.Now);
 
             await Task.WhenAll(
                 totalCountTask,
@@ -120,9 +135,18 @@ public sealed class AlarmLogPageModel : PageModel
             Items = new ObservableCollection<AlarmEvent>(page);
 
             _loadedCount = page.Count;
-            IsEndOfList = _loadedCount >= totalCount;
+
+            IsEndOfList =
+                _loadedCount >= totalCount;
 
             Summary = FormatSummary(summary.Today);
+
+            CurrentState = STATE_CONTENT;
+        }
+        catch (Exception ex)
+        {
+            ErrorMsg = ex.Message;
+            CurrentState = STATE_ERROR;
         }
         finally
         {
@@ -157,7 +181,9 @@ public sealed class AlarmLogPageModel : PageModel
             }
 
             _loadedCount += page.Count;
-            IsEndOfList = page.Count < PageSize;
+
+            IsEndOfList =
+                page.Count < PageSize;
         }
         finally
         {
@@ -175,6 +201,7 @@ public sealed class AlarmLogPageModel : PageModel
         try
         {
             IsRefreshing = true;
+
             await LoadAsync();
         }
         finally
@@ -186,7 +213,6 @@ public sealed class AlarmLogPageModel : PageModel
     private void UpdateCommandStates()
     {
         ReevaluateCommand(LoadMoreCommand);
-
         ReevaluateCommand(RefreshCommand);
     }
 }

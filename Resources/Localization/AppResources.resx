@@ -222,4 +222,7 @@
   <data name="Alarm_Status_Armed" xml:space="preserve">
     <value>Security is enabled</value>
   </data>
+  <data name="Common_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
 </root>

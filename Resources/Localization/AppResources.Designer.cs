@@ -187,6 +187,15 @@ namespace MotionAlarm.Resources.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading....
+        /// </summary>
+        internal static string Common_Loading {
+            get {
+                return ResourceManager.GetString("Common_Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to s.
         /// </summary>
         internal static string Common_Seconds {

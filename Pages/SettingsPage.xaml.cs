@@ -12,9 +12,11 @@ public partial class SettingsPage : ContentPage
         BindingContext = _pageModel;
     }
 
-    protected override async void OnAppearing()
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
+
+        _pageModel.CurrentState = PageModel.STATE_LOADING;
 
         await _pageModel.LoadAsync();
     }

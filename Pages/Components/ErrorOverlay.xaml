@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Grid xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      x:Class="MotionAlarm.Pages.Components.ErrorOverlay"
+      xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
+      x:DataType="pageModels:PageModel"
+      BackgroundColor="{StaticResource AppBackground}">
+    <StackLayout
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+        <Label
+            Margin="20,0"
+            FontSize="Medium"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            TextColor="{StaticResource TextSecondary}"
+            Text="{Binding ErrorMsg}" />
+    </StackLayout>
+</Grid>

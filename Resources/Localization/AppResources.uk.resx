@@ -222,4 +222,7 @@
   <data name="Alarm_Status_Armed" xml:space="preserve">
     <value>Охорону увімкнено</value>
   </data>
+  <data name="Common_Loading" xml:space="preserve">
+    <value>Завантаження...</value>
+  </data>
 </root>

@@ -1,138 +1,174 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:models="clr-namespace:MotionAlarm.Models"
-             xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
-             xmlns:local="clr-namespace:MotionAlarm.Localization"
-             x:Class="MotionAlarm.Pages.AlarmLogPage"
-             x:DataType="pageModels:AlarmLogPageModel"
-             Title="{local:Localization AlarmLog_Title}">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:MotionAlarm.Models"
+    xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
+    xmlns:components="clr-namespace:MotionAlarm.Pages.Components"
+    xmlns:local="clr-namespace:MotionAlarm.Localization"
+    x:Class="MotionAlarm.Pages.AlarmLogPage"
+    x:DataType="pageModels:AlarmLogPageModel"
+    BackgroundColor="{StaticResource AppBackground}"
+    Title="{local:Localization AlarmLog_Title}">
 
-    <Grid Padding="20"
-          RowDefinitions="Auto,Auto,*"
-          RowSpacing="16">
+    <Grid>
 
-        <!-- Header -->
-        <VerticalStackLayout Grid.Row="0"
-                             Spacing="4">
+        <!-- Content -->
+        <Grid
+            Padding="20"
+            RowDefinitions="Auto,Auto,*"
+            RowSpacing="16"
+            IsVisible="{Binding [STATE_CONTENT]}">
 
-            <Label Text="{local:Localization AlarmLog_Title}"
-                   FontSize="28"
-                   FontAttributes="Bold" />
+            <!-- Header -->
+            <VerticalStackLayout
+                Grid.Row="0"
+                Spacing="4">
 
-            <Label Text="{local:Localization AlarmLog_Description}"
-                   FontSize="15"
-                   TextColor="{StaticResource TextSecondary}" />
+                <Label
+                    Text="{local:Localization AlarmLog_Title}"
+                    FontSize="28"
+                    FontAttributes="Bold" />
 
-        </VerticalStackLayout>
+                <Label
+                    Text="{local:Localization AlarmLog_Description}"
+                    FontSize="15"
+                    TextColor="{StaticResource TextSecondary}" />
 
-        <!-- Summary -->
-        <Border Grid.Row="1"
+            </VerticalStackLayout>
+
+            <!-- Summary -->
+            <Border
+                Grid.Row="1"
                 Padding="16">
 
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="14" />
-            </Border.StrokeShape>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
 
-            <Label Text="{Binding Summary}"
-                   FontSize="18"
-                   FontAttributes="Bold" />
+                <Label
+                    Text="{Binding Summary}"
+                    FontSize="18"
+                    FontAttributes="Bold" />
 
-        </Border>
+            </Border>
 
-        <!-- List -->
-        <RefreshView Grid.Row="2"
-                     IsRefreshing="{Binding IsRefreshing}"
-                     Command="{Binding RefreshCommand}"
-                     RefreshColor="{StaticResource AccentStrong}">
+            <!-- List -->
+            <RefreshView
+                Grid.Row="2"
+                IsRefreshing="{Binding IsRefreshing}"
+                Command="{Binding RefreshCommand}"
+                RefreshColor="{StaticResource AccentStrong}">
 
-            <CollectionView ItemsSource="{Binding Items}"
-                            SelectionMode="None"
-                            ItemSizingStrategy="MeasureFirstItem">
+                <CollectionView
+                    ItemsSource="{Binding Items}"
+                    SelectionMode="None"
+                    ItemSizingStrategy="MeasureFirstItem">
 
-                <CollectionView.EmptyView>
+                    <CollectionView.EmptyView>
 
-                    <VerticalStackLayout Padding="30"
-                                         Spacing="8"
-                                         HorizontalOptions="Center"
-                                         VerticalOptions="Center">
+                        <VerticalStackLayout
+                            Padding="30"
+                            Spacing="8"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
 
-                        <Label Text="{local:Localization AlarmLog_Empty_Title}"
-                               FontSize="20"
-                               FontAttributes="Bold"
-                               HorizontalTextAlignment="Center" />
+                            <Label
+                                Text="{local:Localization AlarmLog_Empty_Title}"
+                                FontSize="20"
+                                FontAttributes="Bold"
+                                HorizontalTextAlignment="Center" />
 
-                        <Label Text="{local:Localization AlarmLog_Empty_Description}"
-                               FontSize="14"
-                               HorizontalTextAlignment="Center"
-                               TextColor="{StaticResource TextSecondary}" />
+                            <Label
+                                Text="{local:Localization AlarmLog_Empty_Description}"
+                                FontSize="14"
+                                HorizontalTextAlignment="Center"
+                                TextColor="{StaticResource TextSecondary}" />
 
-                    </VerticalStackLayout>
+                        </VerticalStackLayout>
 
-                </CollectionView.EmptyView>
+                    </CollectionView.EmptyView>
 
-                <CollectionView.ItemTemplate>
+                    <CollectionView.ItemTemplate>
 
-                    <DataTemplate x:DataType="models:AlarmEvent">
+                        <DataTemplate x:DataType="models:AlarmEvent">
 
-                        <Border Margin="0,0,0,10"
+                            <Border
+                                Margin="0,0,0,10"
                                 Padding="14">
 
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="14" />
-                            </Border.StrokeShape>
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="14" />
+                                </Border.StrokeShape>
 
-                            <Grid ColumnDefinitions="*,Auto"
-                                  RowDefinitions="Auto,Auto"
-                                  RowSpacing="6">
+                                <Grid
+                                    ColumnDefinitions="*,Auto"
+                                    RowDefinitions="Auto,Auto"
+                                    RowSpacing="6">
 
-                                <Label Text="{Binding TriggeredAtUtc, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
-                                       FontSize="16"
-                                       FontAttributes="Bold" />
+                                    <Label
+                                        Text="{Binding TriggeredAtUtc, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+                                        FontSize="16"
+                                        FontAttributes="Bold" />
 
-                                <Label Grid.Column="1"
-                                       Text="{Binding TriggerCount, StringFormat='× {0}'}"
-                                       FontSize="15"
-                                       FontAttributes="Bold"
-                                       TextColor="{StaticResource AccentStrong}" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding TriggerCount, StringFormat='× {0}'}"
+                                        FontSize="15"
+                                        FontAttributes="Bold"
+                                        TextColor="{StaticResource AccentStrong}" />
 
-                                <Label Grid.Row="1"
-                                       Text="{Binding SensitivityText}"
-                                       FontSize="13"
-                                       TextColor="{StaticResource TextSecondary}" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Text="{Binding SensitivityText}"
+                                        FontSize="13"
+                                        TextColor="{StaticResource TextSecondary}" />
 
-                                <Label Grid.Row="1"
-                                       Grid.Column="1"
-                                       Text="{Binding SirenStatusText}"
-                                       FontSize="13"
-                                       HorizontalTextAlignment="End"
-                                       TextColor="{StaticResource TextSecondary}" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Text="{Binding SirenStatusText}"
+                                        FontSize="13"
+                                        HorizontalTextAlignment="End"
+                                        TextColor="{StaticResource TextSecondary}" />
 
-                            </Grid>
+                                </Grid>
 
-                        </Border>
+                            </Border>
 
-                    </DataTemplate>
+                        </DataTemplate>
 
-                </CollectionView.ItemTemplate>
+                    </CollectionView.ItemTemplate>
 
-                <!-- Load more -->
-                <CollectionView.Footer>
+                    <!-- Load more -->
+                    <CollectionView.Footer>
 
-                    <Grid Padding="0,6,0,4"
-                          IsVisible="{Binding ShowLoadMore}">
+                        <Grid
+                            Padding="0,6,0,4"
+                            IsVisible="{Binding ShowLoadMore}">
 
-                        <Button Text="{local:Localization AlarmLog_LoadMore}"
+                            <Button
+                                Text="{local:Localization AlarmLog_LoadMore}"
                                 Command="{Binding LoadMoreCommand}"
                                 IsEnabled="{Binding IsLoading, Converter={StaticResource BooleanReverseConverter}}" />
 
-                    </Grid>
+                        </Grid>
 
-                </CollectionView.Footer>
+                    </CollectionView.Footer>
 
-            </CollectionView>
+                </CollectionView>
 
-        </RefreshView>
+            </RefreshView>
+
+        </Grid>
+
+        <!-- Loading -->
+        <components:LoadingOverlay
+            IsVisible="{Binding [STATE_LOADING]}" />
+
+        <!-- Error -->
+        <components:ErrorOverlay
+            IsVisible="{Binding [STATE_ERROR]}" />
 
     </Grid>
 

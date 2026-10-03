@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Grid xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:shared="clr-namespace:MotionAlarm.Pages.Components"
+      x:Class="MotionAlarm.Pages.Components.LoadingOverlay"
+      x:DataType="shared:LoadingOverlay"
+      x:Name="root"
+      BackgroundColor="{StaticResource AppBackground}">
+    <StackLayout
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+        <ActivityIndicator IsRunning="true" Scale="1.3" Color="{StaticResource Accent}" />
+        <Label
+            Margin="0,15"
+            x:Name="label"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            FontSize="Medium"
+            TextColor="{StaticResource TextSecondary}"
+            Text="{Binding Text, Source={x:Reference root}, x:DataType=shared:LoadingOverlay}" />
+    </StackLayout>
+</Grid>

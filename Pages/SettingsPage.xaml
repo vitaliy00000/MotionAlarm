@@ -1,92 +1,203 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
-             xmlns:local="clr-namespace:MotionAlarm.Localization"
-             x:Class="MotionAlarm.Pages.SettingsPage"
-             x:DataType="pageModels:SettingsPageModel"
-             Title="{local:Localization Settings_Title}">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
+    xmlns:components="clr-namespace:MotionAlarm.Pages.Components"
+    xmlns:local="clr-namespace:MotionAlarm.Localization"
+    x:Class="MotionAlarm.Pages.SettingsPage"
+    x:DataType="pageModels:SettingsPageModel"
+    BackgroundColor="{StaticResource AppBackground}"
+    Title="{local:Localization Settings_Title}">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="18">
-            <VerticalStackLayout Spacing="4">
-                <Label Text="{local:Localization Settings_Title}" FontSize="28" FontAttributes="Bold" />
-                <Label Text="{local:Localization Settings_Description}" FontSize="15" TextColor="{StaticResource TextSecondary}" />
-            </VerticalStackLayout>
+    <Grid>
+        <!-- Content -->
+        <ScrollView IsVisible="{Binding [STATE_CONTENT]}">
+            <VerticalStackLayout Padding="20" Spacing="18">
 
-            <Border Padding="18">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16" />
-                </Border.StrokeShape>
-                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="16">
-                    <Label Text="{local:Localization Settings_Siren_Title}" FontSize="17" FontAttributes="Bold" />
-                    <Switch Grid.Column="1" Grid.RowSpan="2" IsToggled="{Binding SirenEnabled}" VerticalOptions="Center" />
-                    <Label Grid.Row="1" Text="{local:Localization Settings_Siren_Description}" FontSize="13" TextColor="{StaticResource TextSecondary}" />
-                </Grid>
-            </Border>
+                <VerticalStackLayout Spacing="4">
+                    <Label
+                        Text="{local:Localization Settings_Title}"
+                        FontSize="28"
+                        FontAttributes="Bold" />
 
-            <Border Padding="18">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16" />
-                </Border.StrokeShape>
-                <VerticalStackLayout Spacing="12">
-                    <Label Text="{local:Localization Settings_Sensitivity_Title}" FontSize="17" FontAttributes="Bold" />
-                    <Label Text="{local:Localization Settings_Sensitivity_Description}" FontSize="13" TextColor="{StaticResource TextSecondary}" />
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                        <Slider Minimum="1" Maximum="5" Value="{Binding Sensitivity}"
+                    <Label
+                        Text="{local:Localization Settings_Description}"
+                        FontSize="15"
+                        TextColor="{StaticResource TextSecondary}" />
+                </VerticalStackLayout>
+
+                <Border Padding="18">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
+
+                    <Grid
+                        ColumnDefinitions="*,Auto"
+                        RowDefinitions="Auto,Auto"
+                        ColumnSpacing="16">
+
+                        <Label
+                            Text="{local:Localization Settings_Siren_Title}"
+                            FontSize="17"
+                            FontAttributes="Bold" />
+
+                        <Switch
+                            Grid.Column="1"
+                            Grid.RowSpan="2"
+                            IsToggled="{Binding SirenEnabled}"
+                            VerticalOptions="Center" />
+
+                        <Label
+                            Grid.Row="1"
+                            Text="{local:Localization Settings_Siren_Description}"
+                            FontSize="13"
+                            TextColor="{StaticResource TextSecondary}" />
+
+                    </Grid>
+                </Border>
+
+                <Border Padding="18">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="12">
+
+                        <Label
+                            Text="{local:Localization Settings_Sensitivity_Title}"
+                            FontSize="17"
+                            FontAttributes="Bold" />
+
+                        <Label
+                            Text="{local:Localization Settings_Sensitivity_Description}"
+                            FontSize="13"
+                            TextColor="{StaticResource TextSecondary}" />
+
+                        <Grid
+                            ColumnDefinitions="*,Auto"
+                            ColumnSpacing="12">
+
+                            <Slider
+                                Minimum="1"
+                                Maximum="5"
+                                Value="{Binding Sensitivity}"
                                 MinimumTrackColor="{StaticResource AccentStrong}"
                                 MaximumTrackColor="{StaticResource Stroke}" />
-                        <Label Grid.Column="1" Text="{Binding Sensitivity, StringFormat='{0:0}'}"
-                               FontSize="20" FontAttributes="Bold" WidthRequest="35"
-                               HorizontalTextAlignment="Center" VerticalOptions="Center" />
-                    </Grid>
-                </VerticalStackLayout>
-            </Border>
 
-            <Border Padding="18">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16" />
-                </Border.StrokeShape>
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding Sensitivity, StringFormat='{0:0}'}"
+                                FontSize="20"
+                                FontAttributes="Bold"
+                                WidthRequest="35"
+                                HorizontalTextAlignment="Center"
+                                VerticalOptions="Center" />
 
-                <VerticalStackLayout Spacing="12">
-                    <Label Text="{local:Localization Settings_ArmDelay_Title}" FontSize="17" FontAttributes="Bold" />
-                    <Label Text="{local:Localization Settings_ArmDelay_Description}" FontSize="13" TextColor="{StaticResource TextSecondary}" />
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                        <Slider Minimum="0" Maximum="60" Value="{Binding ArmDelaySeconds}"
-                            MinimumTrackColor="{StaticResource AccentStrong}"
-                            MaximumTrackColor="{StaticResource Stroke}" />
-                        <Label Grid.Column="1"
-                               Text="{Binding ArmDelayText}"
-                               FontSize="20" FontAttributes="Bold" WidthRequest="50"
-                               HorizontalTextAlignment="Center" VerticalOptions="Center" />
-                    </Grid>
-                </VerticalStackLayout>
-            </Border>
+                        </Grid>
 
-            <Border Padding="18">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16" />
-                </Border.StrokeShape>
+                    </VerticalStackLayout>
+                </Border>
 
-                <VerticalStackLayout Spacing="12">
-                    <Label Text="{local:Localization Settings_SoundDelay_Title}" FontSize="17" FontAttributes="Bold" />
-                    <Label Text="{local:Localization Settings_SoundDelay_Description}" FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                <Border Padding="18">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
 
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                        <Slider Minimum="0"
-                            Maximum="60"
-                            Value="{Binding SoundDelaySeconds}"
-                            MinimumTrackColor="{StaticResource AccentStrong}"
-                            MaximumTrackColor="{StaticResource Stroke}" />
-                        <Label Grid.Column="1"
-                           Text="{Binding SoundDelayText}"
-                           FontSize="20" FontAttributes="Bold" WidthRequest="50"
-                           HorizontalTextAlignment="Center" VerticalOptions="Center" />
-                    </Grid>
-                </VerticalStackLayout>
-            </Border>
+                    <VerticalStackLayout Spacing="12">
 
-            <Button Text="{local:Localization Settings_Save}" Command="{Binding SaveCommand}" Margin="0,4,0,10" />
-        </VerticalStackLayout>
-    </ScrollView>
+                        <Label
+                            Text="{local:Localization Settings_ArmDelay_Title}"
+                            FontSize="17"
+                            FontAttributes="Bold" />
+
+                        <Label
+                            Text="{local:Localization Settings_ArmDelay_Description}"
+                            FontSize="13"
+                            TextColor="{StaticResource TextSecondary}" />
+
+                        <Grid
+                            ColumnDefinitions="*,Auto"
+                            ColumnSpacing="12">
+
+                            <Slider
+                                Minimum="0"
+                                Maximum="60"
+                                Value="{Binding ArmDelaySeconds}"
+                                MinimumTrackColor="{StaticResource AccentStrong}"
+                                MaximumTrackColor="{StaticResource Stroke}" />
+
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding ArmDelayText}"
+                                FontSize="20"
+                                FontAttributes="Bold"
+                                WidthRequest="50"
+                                HorizontalTextAlignment="Center"
+                                VerticalOptions="Center" />
+
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Padding="18">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="12">
+
+                        <Label
+                            Text="{local:Localization Settings_SoundDelay_Title}"
+                            FontSize="17"
+                            FontAttributes="Bold" />
+
+                        <Label
+                            Text="{local:Localization Settings_SoundDelay_Description}"
+                            FontSize="13"
+                            TextColor="{StaticResource TextSecondary}" />
+
+                        <Grid
+                            ColumnDefinitions="*,Auto"
+                            ColumnSpacing="12">
+
+                            <Slider
+                                Minimum="0"
+                                Maximum="60"
+                                Value="{Binding SoundDelaySeconds}"
+                                MinimumTrackColor="{StaticResource AccentStrong}"
+                                MaximumTrackColor="{StaticResource Stroke}" />
+
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding SoundDelayText}"
+                                FontSize="20"
+                                FontAttributes="Bold"
+                                WidthRequest="50"
+                                HorizontalTextAlignment="Center"
+                                VerticalOptions="Center" />
+
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button
+                    Text="{local:Localization Settings_Save}"
+                    Command="{Binding SaveCommand}"
+                    Margin="0,4,0,10" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Loading overlay -->
+        <components:LoadingOverlay
+            IsVisible="{Binding [STATE_LOADING]}" />
+
+        <!-- Error overlay -->
+        <components:ErrorOverlay
+            IsVisible="{Binding [STATE_ERROR]}" />
+
+    </Grid>
 </ContentPage>

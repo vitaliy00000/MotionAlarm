@@ -2,7 +2,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Color x:Key="AppBackground">#222B3D</Color>
+    <Color x:Key="AppBackground">#000000</Color>
     <Color x:Key="Surface">#2A3448</Color>
     <Color x:Key="SurfaceAlt">#243045</Color>
     <Color x:Key="Stroke">#3A465E</Color>
