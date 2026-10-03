@@ -7,7 +7,9 @@ public partial class AlarmLogPage : ContentPage
     public AlarmLogPage(AlarmLogPageModel pageModel)
     {
         InitializeComponent();
-        BindingContext = _pageModel = pageModel;
+
+        _pageModel = pageModel;
+        BindingContext = _pageModel;
     }
 
     protected override async void OnAppearing()

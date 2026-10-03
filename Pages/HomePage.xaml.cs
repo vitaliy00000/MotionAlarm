@@ -5,11 +5,11 @@ public partial class HomePage : ContentPage
     private readonly HomePageModel _pageModel;
 
     public HomePage(HomePageModel pageModel)
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
 
         _pageModel = pageModel;
-        BindingContext = pageModel;
+        BindingContext = _pageModel;
     }
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)

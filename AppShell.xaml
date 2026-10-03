@@ -4,14 +4,55 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:MotionAlarm.Pages"
-    Shell.FlyoutBehavior="Flyout"
-    Shell.BackgroundColor="{StaticResource AppBackground}"
-    Shell.ForegroundColor="{StaticResource TextPrimary}"
-    Shell.TitleColor="{StaticResource TextPrimary}"
-    Shell.UnselectedColor="{StaticResource TextSecondary}"
-    Title="MotionAlarm">
+    xmlns:f="clr-namespace:Fonts"
+    FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarBackgroundColor="{StaticResource AppBackground}"
+    Shell.TabBarForegroundColor="{StaticResource AccentStrong}"
+    Shell.TabBarUnselectedColor="{StaticResource TextSecondary}"
+    Shell.TabBarTitleColor="{StaticResource AccentStrong}">
 
-    <ShellContent Title="Охорона" ContentTemplate="{DataTemplate pages:HomePage}" Route="home" />
-    <ShellContent Title="Налаштування" ContentTemplate="{DataTemplate pages:SettingsPage}" Route="settings" />
-    <ShellContent Title="Журнал спрацювань" ContentTemplate="{DataTemplate pages:AlarmLogPage}" Route="alarm-log" />
+    <TabBar>
+
+        <ShellContent
+            Title="Охорона"
+            Route="home"
+            ContentTemplate="{DataTemplate pages:HomePage}">
+            <ShellContent.Icon>
+                <FontImageSource
+                    Glyph="{x:Static f:FluentUI.home_24_regular}"
+                    FontFamily="{x:Static f:FluentUI.FontFamily}"
+                    Size="24"
+                    Color="{StaticResource TextSecondary}" />
+            </ShellContent.Icon>
+        </ShellContent>
+
+        <ShellContent
+            Title="Журнал"
+            Route="alarm-log"
+            ContentTemplate="{DataTemplate pages:AlarmLogPage}">
+            <ShellContent.Icon>
+                <FontImageSource
+                    Glyph="{x:Static f:FluentUI.history_24_regular}"
+                    FontFamily="{x:Static f:FluentUI.FontFamily}"
+                    Size="24"
+                    Color="{StaticResource TextSecondary}" />
+            </ShellContent.Icon>
+        </ShellContent>
+
+        <ShellContent
+            Title="Налаштування"
+            Route="settings"
+            ContentTemplate="{DataTemplate pages:SettingsPage}">
+            <ShellContent.Icon>
+                <FontImageSource
+                    Glyph="{x:Static f:FluentUI.settings_24_regular}"
+                    FontFamily="{x:Static f:FluentUI.FontFamily}"
+                    Size="24"
+                    Color="{StaticResource TextSecondary}" />
+            </ShellContent.Icon>
+        </ShellContent>
+
+    </TabBar>
+
 </Shell>

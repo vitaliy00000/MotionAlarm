@@ -7,7 +7,9 @@ public partial class SettingsPage : ContentPage
     public SettingsPage(SettingsPageModel pageModel)
     {
         InitializeComponent();
-        BindingContext = _pageModel = pageModel;
+
+        _pageModel = pageModel;
+        BindingContext = _pageModel;
     }
 
     protected override async void OnAppearing()

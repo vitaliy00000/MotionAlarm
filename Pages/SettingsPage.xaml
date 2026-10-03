@@ -4,8 +4,7 @@
              xmlns:pageModels="clr-namespace:MotionAlarm.PageModels"
              x:Class="MotionAlarm.Pages.SettingsPage"
              x:DataType="pageModels:SettingsPageModel"
-             Title="Налаштування"
-             Shell.PresentationMode="NotAnimated">
+             Title="Налаштування">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="18">

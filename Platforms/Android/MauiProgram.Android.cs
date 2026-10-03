@@ -6,6 +6,7 @@ public static partial class MauiProgram
 {
     static partial void ConfigurePlatformServices(IServiceCollection services)
     {
+        services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IAlarmPlayer, AlarmPlayer>();
         services.AddSingleton<IAlarmPlatformService, AlarmPlatformService>();
     }
